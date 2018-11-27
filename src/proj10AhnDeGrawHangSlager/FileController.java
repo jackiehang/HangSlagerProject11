@@ -11,7 +11,7 @@
  *
  */
 
-package proj9AhnDeGrawHangSlager;
+package proj10AhnDeGrawHangSlager;
 
 import javafx.event.Event;
 
@@ -35,11 +35,11 @@ import javafx.stage.Window;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import proj9AhnDeGrawHangSlager.bantam.lexer.Scanner;
-import proj9AhnDeGrawHangSlager.bantam.lexer.Token;
-import proj9AhnDeGrawHangSlager.bantam.util.CompilationException;
-import proj9AhnDeGrawHangSlager.bantam.util.Error;
-import proj9AhnDeGrawHangSlager.bantam.util.ErrorHandler;
+import proj10AhnDeGrawHangSlager.bantam.lexer.Scanner;
+import proj10AhnDeGrawHangSlager.bantam.lexer.Token;
+import proj10AhnDeGrawHangSlager.bantam.util.CompilationException;
+import proj10AhnDeGrawHangSlager.bantam.util.Error;
+import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
 
 /**
  * This class contains the handlers for each of the menu options in the IDE.

@@ -10,7 +10,7 @@
  * Date: October 12, 2018
  */
 
-package proj9AhnDeGrawHangSlager;
+package proj10AhnDeGrawHangSlager;
 
 import javafx.application.Platform;
 import javafx.scene.control.*;

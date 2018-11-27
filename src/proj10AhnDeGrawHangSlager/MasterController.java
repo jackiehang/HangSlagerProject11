@@ -11,7 +11,7 @@
  *
  */
 
-package proj9AhnDeGrawHangSlager;
+package proj10AhnDeGrawHangSlager;
 
 
 import javafx.beans.property.SimpleListProperty;
@@ -27,8 +27,8 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.util.List;
 
-import proj9AhnDeGrawHangSlager.bantam.util.CompilationException;
-import proj9AhnDeGrawHangSlager.bantam.util.Error;
+import proj10AhnDeGrawHangSlager.bantam.util.CompilationException;
+import proj10AhnDeGrawHangSlager.bantam.util.Error;
 
 /**
  * This is the master controller for the program. it references
@@ -381,7 +381,7 @@ public class MasterController {
      */
     @FXML
     public void handleDarkMode(){
-       handleThemeChange("proj9AhnDeGrawHangSlager/resources/DarkMode.css", darkModeMenuItem);
+       handleThemeChange("proj10AhnDeGrawHangSlager/resources/DarkMode.css", darkModeMenuItem);
     }
 
     /**
@@ -399,7 +399,7 @@ public class MasterController {
      */
     @FXML
     public void handleFunMode(){
-        handleThemeChange("proj9AhnDeGrawHangSlager/resources/FunMode.css", funModeMenuItem);
+        handleThemeChange("proj10AhnDeGrawHangSlager/resources/FunMode.css", funModeMenuItem);
 
     }
 
@@ -410,7 +410,7 @@ public class MasterController {
      */
     @FXML
     public void handleHallowThemeMode(){
-        handleThemeChange("proj9AhnDeGrawHangSlager/resources/HallowTheme.css", hallowThemeItem);
+        handleThemeChange("proj10AhnDeGrawHangSlager/resources/HallowTheme.css", hallowThemeItem);
     }
     /**
      * Helper method to change the theme

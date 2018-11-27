@@ -3,7 +3,7 @@
  * Author: djskrien
  * Date: Fall, 2018
  */
-package proj9AhnDeGrawHangSlager.bantam.util;
+package proj10AhnDeGrawHangSlager.bantam.util;
 
 /**
  * This class represents an error in a Bantam Java program that is severe enough

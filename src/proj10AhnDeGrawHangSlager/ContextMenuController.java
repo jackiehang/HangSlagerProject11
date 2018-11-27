@@ -12,7 +12,7 @@
  * changed variables names as appropriate to work with AhnDeGrawHangSlager project 7
  */
 
-package proj9AhnDeGrawHangSlager;
+package proj10AhnDeGrawHangSlager;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
