@@ -1,4 +1,12 @@
-package proj10AhnDeGrawHangSlager;
+/*
+ * File: JavaTabPane.java
+ * Names: Kevin Ahn, Lucas DeGraw, Jackie Hang, Kyle Slager
+ * Class: CS 361
+ * Project 9
+ * Date: November 20, 2018
+ */
+
+package proj9AhnDeGrawHangSlager;
 
 import javafx.scene.control.TabPane;
 

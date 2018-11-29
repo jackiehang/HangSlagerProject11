@@ -2,8 +2,8 @@
  * File: EditController.java
  * Names: Kevin Ahn, Lucas DeGraw, Jackie Hang, Kyle Slager
  * Class: CS 361
- * Project 7
- * Date: November 2, 2018
+ * Project 9
+ * Date: November 20, 2018
  * ---------------------------
  * Edited From: Zena Abulhab, Paige Hanssen, Kyle Slager, Kevin Zhou
  * Project 5
@@ -11,7 +11,7 @@
  *
  */
 
-package proj10AhnDeGrawHangSlager;
+package proj9AhnDeGrawHangSlager;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;

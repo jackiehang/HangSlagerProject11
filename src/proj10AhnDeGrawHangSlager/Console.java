@@ -2,8 +2,8 @@
  * File: Console.java
  * Names: Kevin Ahn, Lucas DeGraw, Jackie Hang, Kyle Slager
  * Class: CS 361
- * Project 7
- * Date: November 2, 2018
+ * Project 9
+ * Date: November 20, 2018
  * ---------------------------
  * Edited From: Zena Abulhab, Paige Hanssen, Kyle Slager, Kevin Zhou
  * Project 5
@@ -11,7 +11,7 @@
  *
  */
 
-package proj10AhnDeGrawHangSlager;
+package proj9AhnDeGrawHangSlager;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -32,14 +32,13 @@ import org.fxmisc.richtext.StyleClassedTextArea;
 public class Console extends StyleClassedTextArea {
 
     private int commandStartIndex;
-    private ToolbarController toolbarController;
+
     private String command;
     // Whether or not a user-input command has been received
     // Constructor, using StyleClassedTextArea default
     public Console(){
         super();
         this.commandStartIndex = -1;
-        this.toolbarController = null;
         this.command = "";
         this.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             this.handleKeyPressed(e);
@@ -49,26 +48,8 @@ public class Console extends StyleClassedTextArea {
         });
     }
 
-    /**
-     * Set the toolbarController related to this console
-     * @param toolbarController The toolbarController to assign to the field.
-     */
-    public void setToolbarController(ToolbarController toolbarController){
-        this.toolbarController = toolbarController;
-    }
 
-    /**
-     * Gets the command text that the user has input to this console.
-     * @return String that the user has input to the console
-     */
-    public String getConsoleCommand(){
-        String userCommand = this.command;
-        this.command = "";
 
-        //-1 means no command is stored
-        this.commandStartIndex = -1;
-        return userCommand + "\n";
-    }
 
     /**
      * Adds a new, separate line of text to this console.
@@ -130,7 +111,6 @@ public class Console extends StyleClassedTextArea {
             e.consume();
             //If Enter was pressed in the middle of a command append a new line to the end
             if (this.getCaretPosition() >= commandStartIndex) {
-                toolbarController.setReceivedCommand(true);
                 this.appendText("\n");
                 this.requestFollowCaret();
             }

@@ -1,9 +1,24 @@
-package proj10AhnDeGrawHangSlager;
+/*
+ * File: MatchBracketOrParen.java
+ * Names: Kevin Ahn, Lucas DeGraw, Jackie Hang, Kyle Slager
+ * Class: CS 361
+ * Project 9
+ * Date: November 20, 2018
+ */
+
+package proj9AhnDeGrawHangSlager;
 
 import javafx.scene.control.IndexRange;
 import java.util.Stack;
 
-
+/**
+ * This is the MatchBracketOrParen Class that takes in an edit controller
+ * and matches the bracket of the file
+ *
+ * @author Kevin Ahn, Lucas DeGraw, Jackie Hang, Kyle Slager
+ * @version 1.0
+ * @since 11-20-2018
+ */
 public class MatchBracketOrParen {
 
     private EditController editController;

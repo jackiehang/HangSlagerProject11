@@ -12,7 +12,7 @@
  * changed variables names as appropriate to work with AhnDeGrawHangSlager project 7
  */
 
-package proj10AhnDeGrawHangSlager;
+package proj9AhnDeGrawHangSlager;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -27,10 +27,7 @@ import java.io.File;
  * ContextMenu Controller, handling context menu related actions.
  */
 public class ContextMenuController {
-    /**
-     * ToolbarController handling toolbar actions
-     */
-    private ToolbarController toolbarController;
+
     /**
      * FileMenuController handling File menu actions
      */
@@ -40,12 +37,6 @@ public class ContextMenuController {
      */
     private EditController editMenuController;
 
-    /**
-     * Sets the ToolBarController.
-     *
-     * @param toolBarController ToolBarController initialized in main Controller.
-     */
-    public void setToolBarController(ToolbarController toolBarController) { this.toolbarController = toolBarController; }
 
     /**
      * Sets file menu controller.

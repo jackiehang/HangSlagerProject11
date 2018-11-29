@@ -2,8 +2,8 @@
  * File: MasterController.java
  * Names: Kevin Ahn, Lucas DeGraw, Jackie Hang, Kyle Slager
  * Class: CS 361
- * Project 7
- * Date: November 2, 2018
+ * Project 9
+ * Date: November 20, 2018
  * ---------------------------
  * Edited From: Zena Abulhab, Paige Hanssen, Kyle Slager, Kevin Zhou
  * Project 5
@@ -11,7 +11,7 @@
  *
  */
 
-package proj10AhnDeGrawHangSlager;
+package proj9AhnDeGrawHangSlager;
 
 
 import javafx.beans.property.SimpleListProperty;
@@ -27,8 +27,8 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.util.List;
 
-import proj10AhnDeGrawHangSlager.bantam.util.CompilationException;
-import proj10AhnDeGrawHangSlager.bantam.util.Error;
+import proj9AhnDeGrawHangSlager.bantam.util.CompilationException;
+import proj9AhnDeGrawHangSlager.bantam.util.Error;
 
 /**
  * This is the master controller for the program. it references
@@ -57,23 +57,21 @@ public class MasterController {
     @FXML private MenuItem funModeMenuItem;
     @FXML private MenuItem hallowThemeItem;
     @FXML private Console console;
-    @FXML private Button stopButton;
-    @FXML private Button compileButton;
-    @FXML private Button compileRunButton;
     @FXML private TextField findTextEntry;
     @FXML private Button findPrevBtn;
     @FXML private Button findNextBtn;
     @FXML private TextField replaceTextEntry;
     @FXML private Menu prefMenu;
-    @FXML private TreeView directoryTree;
     @FXML private Button scanButton;
 
     private EditController editController;
     private FileController fileController;
-    private ToolbarController toolbarController;
+
 
     // this line from JianQuanMarcello project 6
     private ContextMenuController contextMenuController;
+
+
 
 
 
@@ -83,20 +81,19 @@ public class MasterController {
         editController = new EditController(javaTabPane, findTextEntry, findPrevBtn, findNextBtn, replaceTextEntry);
         fileController = new FileController(vBox,javaTabPane);
 
-        toolbarController = new ToolbarController(console,stopButton,compileButton,compileRunButton,javaTabPane);
         SimpleListProperty<Tab> listProperty = new SimpleListProperty<Tab> (javaTabPane.getTabs());
         editMenu.disableProperty().bind(listProperty.emptyProperty());
         saveMenuItem.disableProperty().bind(listProperty.emptyProperty());
         saveAsMenuItem.disableProperty().bind(listProperty.emptyProperty());
         closeMenuItem.disableProperty().bind(listProperty.emptyProperty());
         scanButton.disableProperty().bind(listProperty.emptyProperty());
-        this.toolbarController.setReceivedCommand(false);
-        this.console.setToolbarController(this.toolbarController);
+
 
         // this line from JianQuanMarcello project 6
         this.setupContextMenuController();
 
     }
+
 
     /**
      * Creates a reference to the ContextMenuController and passes in window items and other sub Controllers when necessary.
@@ -106,18 +103,8 @@ public class MasterController {
         this.contextMenuController = new ContextMenuController();
         this.contextMenuController.setFileMenuController(this.fileController);
         this.contextMenuController.setEditMenuController(this.editController);
-        this.contextMenuController.setToolBarController(this.toolbarController);
 
         this.fileController.setContextMenuController(this.contextMenuController);
-    }
-
-    /**
-     * Calls handleNewCommand() from the Toolbar Controller if the user
-     * presses the enter key.
-     * @param ke the key event
-     */
-    @FXML public void handleUserKeypress(KeyEvent ke){
-        toolbarController.handleUserKeypress(ke);
     }
 
     /**
@@ -144,79 +131,13 @@ public class MasterController {
         editController.handleUnTabbing();
     }
 
+
     /**
-     * Helper method that calls either Compile or Compile and Run
-     * @param compileMethod a String the consists of either "handleCompile" or
-     *                      "handleCompileAndRun"
+     * Scans the file of the current tab for tokens
+     * @param event
      * @throws InterruptedException
      */
-    private void callProperCompileMethod(String compileMethod) throws InterruptedException{
-        if (compileMethod.equals("handleCompile")) {
-            toolbarController.handleCompile(fileController.getFilePath());
-        }
-        else {
-            toolbarController.handleCompileAndRun(fileController.getFilePath());
-        }
-    }
-
-    /**
-     * Helper method that checks if user wants to save a file before
-     * compiling their code- It also calls the necessary compile method
-     * @param compileMethod  a String the consists of either "handleCompile" or
-     *                      "handleCompileAndRun"
-     * @throws InterruptedException
-     */
-    private void compileHelper(String compileMethod) throws InterruptedException{
-        toolbarController.disableCompileAndRunButtons();
-        JavaTab curTab = (JavaTab)this.javaTabPane.getSelectionModel().getSelectedItem();
-        if (!javaTabPane.getTabSavedStatus(curTab)) {
-
-            String saveResult = toolbarController.handleCompileSaveDialog();
-            if (saveResult == "yesButton") {
-                fileController.handleSave();
-                callProperCompileMethod(compileMethod);
-            } else if (saveResult == "noButton") {
-                if(fileController.getFilePath() == null){
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Cannot compile a file with no previous saved version.");
-                    alert.showAndWait();
-                }
-                callProperCompileMethod(compileMethod);
-            }else{ return;}
-        } else {
-            callProperCompileMethod(compileMethod);
-        }
-    }
-
-    /**
-     * Handler for the Compile in the toolbar. Checks if the current file
-     * has been saved. If it has not, prompts the user to save, if so,
-     * compiles the program. If user chooses not to save, compiles last
-     * version of the file.
-     */
-    @FXML public void handleCompile() throws InterruptedException{
-        toolbarController.disableCompileAndRunButtons();
-        compileHelper("handleCompile");
-    }
-
-    /**
-     * Handler for the Compile and Run button in the toolbar.
-     * Checks if the current file has been saved. If it has not,
-     * prompts the user to save, if so, compiles and runs the program.
-     * If user chooses not to save, compiles and runs the last
-     * version of the file.
-     */
-    @FXML public void handleCompileAndRun() throws InterruptedException {
-        toolbarController.disableCompileAndRunButtons();
-        compileHelper("handleCompileAndRun");
-    }
-
-    /**
-     * This method clears the console, tries to scan
-     * and will write any errors to the console
-     * @param event press of the Scan button triggering this method
-     */
-    @FXML public void handleScan(Event event) {
+    @FXML public void handleScan(Event event) throws InterruptedException {
 
         this.console.clear();
         try {
@@ -236,18 +157,6 @@ public class MasterController {
             this.console.writeLine(scanningErrors.size() +
                     " illegal tokens were found.", "ERROR");
         }
-    }
-    /**
-     * Handler for the Stop button in the toolbar.
-     * Calls the handleStop() method from Toolbar Controller and re-enables the toolbar buttons.
-     */
-    @FXML public void handleStop(){
-        toolbarController.handleStop();
-        if(this.javaTabPane.getTabs().isEmpty()) {
-            this.stopButton.setDisable(true);
-            return;
-        }
-        toolbarController.enableCompileAndRunButtons();
     }
 
     /**
@@ -272,9 +181,6 @@ public class MasterController {
      */
     @FXML public void handleNew() {
         fileController.handleNew( null ); // TODO: decide whether to create a new File object or not here
-        if(!toolbarController.isTaskRunning() && this.javaTabPane.getTabs().size() > 0) {
-            toolbarController.enableCompileAndRunButtons();
-        }
     }
 
     /**
@@ -285,9 +191,7 @@ public class MasterController {
      */
     @FXML public void handleOpen() {
         fileController.handleOpen();
-        if(!toolbarController.isTaskRunning() && this.javaTabPane.getTabs().size() > 0) {
-            toolbarController.enableCompileAndRunButtons();
-        }
+
     }
 
     /**
@@ -298,10 +202,7 @@ public class MasterController {
      */
     @FXML public void handleClose(Event event) {
         fileController.handleClose(event);
-//        if (this.tabPane.getTabs().isEmpty()&&!toolbarController.isTaskRunning()){
-//            disableToolbar();
-//        }
-
+//
     }
 
     /**
@@ -331,7 +232,6 @@ public class MasterController {
      * Returns when the user cancels exiting any tab.
      */
     @FXML public void handleExit(Event event) {
-        toolbarController.handleStop();
         fileController.handleExit(event);
     }
 
@@ -381,7 +281,7 @@ public class MasterController {
      */
     @FXML
     public void handleDarkMode(){
-       handleThemeChange("proj10AhnDeGrawHangSlager/resources/DarkMode.css", darkModeMenuItem);
+       handleThemeChange("proj9AhnDeGrawHangSlager/resources/DarkMode.css", darkModeMenuItem);
     }
 
     /**
@@ -391,7 +291,6 @@ public class MasterController {
     public void handleNormalMode(){
         vBox.getStylesheets().remove(vBox.getStylesheets().size()-1);
         enableUnselectedThemes(normalModeMenuItem);
-
     }
 
     /**
@@ -399,10 +298,9 @@ public class MasterController {
      */
     @FXML
     public void handleFunMode(){
-        handleThemeChange("proj10AhnDeGrawHangSlager/resources/FunMode.css", funModeMenuItem);
+        handleThemeChange("proj9AhnDeGrawHangSlager/resources/FunMode.css", funModeMenuItem);
 
     }
-
 
     /**
      * Changes the theme of the IDE to HallowTheme--
@@ -410,8 +308,9 @@ public class MasterController {
      */
     @FXML
     public void handleHallowThemeMode(){
-        handleThemeChange("proj10AhnDeGrawHangSlager/resources/HallowTheme.css", hallowThemeItem);
+        handleThemeChange("proj9AhnDeGrawHangSlager/resources/HallowTheme.css", hallowThemeItem);
     }
+
     /**
      * Helper method to change the theme
      * @param themeCSS
@@ -457,14 +356,6 @@ public class MasterController {
         }
     }
 
-//    /**
-//     * Disables the Compile, Compile and Run, and Stop buttons in the toolbar
-//     */
-//    private void disableToolbar(){
-//        this.compileButton.setDisable(true);
-//        this.compileRunButton.setDisable(true);
-//        this.stopButton.setDisable(true);
-//    }
 
     /**
      * Calls handleMatchBracketOrParen() of the editController

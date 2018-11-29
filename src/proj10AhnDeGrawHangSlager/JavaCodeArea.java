@@ -1,10 +1,10 @@
-package proj10AhnDeGrawHangSlager;
+package proj9AhnDeGrawHangSlager;
 /*
  * File: JavaCodeArea.java
  * Names: Kevin Ahn, Lucas DeGraw, Jackie Hang, Kyle Slager
  * Class: CS 361
- * Project 7
- * Date: November 2, 2018
+ * Project 9
+ * Date: November 20, 2018
  */
 
 import javafx.beans.value.ChangeListener;
