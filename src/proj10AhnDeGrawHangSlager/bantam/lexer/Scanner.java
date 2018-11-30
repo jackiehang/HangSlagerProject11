@@ -65,7 +65,7 @@ public class Scanner
             sourceFile = new SourceFile(filename);
         }
         catch (CompilationException e){
-            throw e;
+
         }
     }
 
@@ -381,9 +381,7 @@ public class Scanner
                     this.sourceFile.getCurrentLineNumber());
         }
         else {
-            this.goToNextChar = false;
-            return new Token(Token.Kind.PLUSMINUS, prevChar.toString(),
-                    this.sourceFile.getCurrentLineNumber());
+            return setErrorTokenSetNextChar(prevChar.toString());
         }
     }
 
@@ -405,9 +403,7 @@ public class Scanner
                     this.sourceFile.getCurrentLineNumber());
         }
         else {
-            this.goToNextChar = false;
-            return new Token(Token.Kind.PLUSMINUS, prevChar.toString(),
-                    this.sourceFile.getCurrentLineNumber());
+            return setErrorTokenSetNextChar(prevChar.toString());
         }
     }
 
@@ -488,9 +484,7 @@ public class Scanner
                 this.errorHandler.register(Error.Kind.LEX_ERROR,
                         this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
                         "UNCLOSED QUOTE");
-                this.goToNextChar = false;
-                return new Token(Token.Kind.ERROR, spelling,
-                        this.sourceFile.getCurrentLineNumber());
+                setErrorTokenSetNextChar(spelling);
             }
 
             //otherwise add on to the string
@@ -510,9 +504,7 @@ public class Scanner
             this.errorHandler.register(Error.Kind.LEX_ERROR,
                     this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
                     "STRING EXCEEDS MAX CHAR LENGTH 5000");
-            this.goToNextChar = false;
-            return new Token(Token.Kind.ERROR, spelling,
-                    this.sourceFile.getCurrentLineNumber());
+            setErrorTokenSetNextChar(spelling);
         }
     }
 
@@ -562,6 +554,12 @@ public class Scanner
             }
         }
 
+    }
+
+    public Token setErrorTokenSetNextChar(String spelling){
+        this.goToNextChar = false;
+        return new Token(Token.Kind.ERROR, spelling,
+                this.sourceFile.getCurrentLineNumber());
     }
 
 }

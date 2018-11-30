@@ -92,4 +92,6 @@ class SourceFile
             throw new CompilationException("File " + filename + " could not be read.");
         }
     }
+
 }
+
