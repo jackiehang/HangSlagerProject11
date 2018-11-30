@@ -381,6 +381,9 @@ public class Scanner
                     this.sourceFile.getCurrentLineNumber());
         }
         else {
+            this.errorHandler.register(Error.Kind.LEX_ERROR,
+                    this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
+                    "INVALID PLUS CONSTANT");
             return setErrorTokenSetNextChar(prevChar.toString());
         }
     }
@@ -403,6 +406,9 @@ public class Scanner
                     this.sourceFile.getCurrentLineNumber());
         }
         else {
+            this.errorHandler.register(Error.Kind.LEX_ERROR,
+                    this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
+                    "INVALID MINUS TOKEN");
             return setErrorTokenSetNextChar(prevChar.toString());
         }
     }
