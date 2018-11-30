@@ -8,16 +8,16 @@
  * Edited From: Dale Skrien
  */
 
-package proj9AhnDeGrawHangSlager.bantam.lexer;
+package proj10AhnDeGrawHangSlager.bantam.lexer;
 
-import proj9AhnDeGrawHangSlager.bantam.util.CompilationException;
-import proj9AhnDeGrawHangSlager.bantam.util.ErrorHandler;
+import proj10AhnDeGrawHangSlager.bantam.util.CompilationException;
+import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
 
 import java.io.*;
 import java.util.List;
 import java.util.Set;
 
-import proj9AhnDeGrawHangSlager.bantam.util.Error;
+import proj10AhnDeGrawHangSlager.bantam.util.Error;
 
 
 /**
