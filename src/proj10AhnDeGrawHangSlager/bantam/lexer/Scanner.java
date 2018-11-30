@@ -504,7 +504,7 @@ public class Scanner
             this.errorHandler.register(Error.Kind.LEX_ERROR,
                     this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
                     "STRING EXCEEDS MAX CHAR LENGTH 5000");
-            setErrorTokenSetNextChar(spelling);
+            return setErrorTokenSetNextChar(spelling);
         }
     }
 
