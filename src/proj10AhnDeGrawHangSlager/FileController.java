@@ -65,6 +65,7 @@ public class FileController {
 
 
     private Scanner scanner;
+    private ErrorHandler errorHandler;
 
     /**
      * Constructor for the class. Intializes the save status
@@ -335,7 +336,8 @@ public class FileController {
         if (this.javaTabPane.tabIsSaved(curTab)) {
             String filename = this.tabFilepathMap.get(curTab);
             try {
-                this.scanner = new Scanner(filename, new ErrorHandler());
+                this.errorHandler = new ErrorHandler();
+                this.scanner = new Scanner(filename, this.errorHandler);
             }
             catch(CompilationException e){
                 throw e;
@@ -372,7 +374,7 @@ public class FileController {
      */
     public List<Error> getScanningErrors() {
         if (this.scanner == null) return null;
-        return this.scanner.getErrors();
+        return this.errorHandler.getErrorList();
     }
 
     /**

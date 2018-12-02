@@ -40,7 +40,7 @@ public class Scanner
     private final Set<Character> charsEndingIdentifierOrKeyword =
             Set.of('"', '/', '+', '-', '>', '<', '=', '&', '{',
                     '}', '[', ']', '(', ')', ';', ':', '!', ' ',
-                    '.', ',', '\r', '\n');
+                    '.', ',', '\r', '\n', '*');
 
 
     /**
@@ -267,11 +267,14 @@ public class Scanner
             else if (prevChar.equals('*') && currentChar.equals('/'))
                 commentTerminated = true;
 
+
             prevChar = currentChar;
             currentChar = this.sourceFile.getNextChar();
         }
         this.goToNextChar = true;
-        return new Token(Token.Kind.COMMENT, commentBody,
+        System.out.println("commentBody: " + commentBody);
+        System.out.println("curChar: " + currentChar);
+        return new Token(Token.Kind.COMMENT, commentBody.concat(prevChar.toString()),
                 this.sourceFile.getCurrentLineNumber());
     }
 
@@ -466,6 +469,21 @@ public class Scanner
             }
         }
 
+
+        while(Character.isLetterOrDigit(currentChar) || currentChar.equals('_')) {
+            spelling = spelling.concat(currentChar.toString());
+            currentChar = this.sourceFile.getNextChar();
+        }
+        if (charsEndingIdentifierOrKeyword.contains(currentChar)) {
+            this.goToNextChar = true;
+            spelling= spelling.concat(currentChar.toString());
+            return new Token(Token.Kind.ERROR, spelling,
+                    this.sourceFile.getCurrentLineNumber());
+        }
+        this.errorHandler.register(Error.Kind.LEX_ERROR,
+                this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
+                "UNSUPPORTED IDENTIFIER CHARACTER");
+
         this.goToNextChar = false;
         return new Token(Token.Kind.IDENTIFIER, spelling, this.sourceFile.getCurrentLineNumber());
     }
@@ -524,15 +542,6 @@ public class Scanner
     }
 
     /**
-     *
-     * @return a list of errors from the ErrorHandler instance of this class
-     */
-    public List<Error> getErrors() {
-        return this.errorHandler.getErrorList();
-    }
-
-
-    /**
      * Tester Method for the Scanner class.
      * Prints all the tokens of a file
      *
@@ -542,8 +551,10 @@ public class Scanner
         if(args.length > 0){
             for(int i = 0; i< args.length; i ++){
                 Scanner scanner;
+                ErrorHandler errorHandler = new ErrorHandler();
                 try {
-                   scanner = new Scanner(args[i], new ErrorHandler());
+
+                    scanner = new Scanner(args[i], errorHandler);
                 }
                 catch(CompilationException e){
                     System.out.println(e);
@@ -555,9 +566,9 @@ public class Scanner
                     System.out.println(nextToken);
                 }
 
-                if(scanner.getErrors().size() > 0){
+                if(errorHandler.getErrorList().size() > 0){
                     System.out.println("Scanning of " + args[i] + " was not successful. "+
-                            scanner.getErrors().size() +" errors were found.\n\n");
+                            errorHandler.getErrorList().size() +" errors were found.\n\n");
                 }
                 else{
 

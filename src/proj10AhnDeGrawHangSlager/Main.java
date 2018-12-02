@@ -14,6 +14,7 @@
 package proj10AhnDeGrawHangSlager;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -39,11 +40,15 @@ public class Main extends Application{
      */
     @Override
     public void start(Stage stage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("resources/Main.fxml"));
+        FXMLLoader loader = new FXMLLoader();
+
+        Parent root = loader.load(getClass().getResource("resources/Main.fxml"));
+
         Scene scene = new Scene(root, 1000, 600);
         stage.setTitle("Project 09");
         stage.setScene(scene);
         stage.show();
+
     }
     /**
      * Launches an instance of class Main
