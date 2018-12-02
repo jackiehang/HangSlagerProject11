@@ -490,9 +490,12 @@ public class Scanner
                 this.errorHandler.register(Error.Kind.LEX_ERROR,
                         this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
                         "UNCLOSED QUOTE");
-                setErrorTokenSetNextChar(spelling);
+                return setErrorTokenSetNextChar(spelling);
             }
-
+            else if (currentChar.equals('\\')){
+                spelling = spelling.concat(currentChar.toString());
+                currentChar = this.sourceFile.getNextChar();
+            }
             //otherwise add on to the string
             spelling = spelling.concat(currentChar.toString());
             currentChar = this.sourceFile.getNextChar();
@@ -514,6 +517,11 @@ public class Scanner
         }
     }
 
+    public Token setErrorTokenSetNextChar(String spelling){
+        this.goToNextChar = false;
+        return new Token(Token.Kind.ERROR, spelling,
+                this.sourceFile.getCurrentLineNumber());
+    }
 
     /**
      *
@@ -560,12 +568,6 @@ public class Scanner
             }
         }
 
-    }
-
-    public Token setErrorTokenSetNextChar(String spelling){
-        this.goToNextChar = false;
-        return new Token(Token.Kind.ERROR, spelling,
-                this.sourceFile.getCurrentLineNumber());
     }
 
 }
