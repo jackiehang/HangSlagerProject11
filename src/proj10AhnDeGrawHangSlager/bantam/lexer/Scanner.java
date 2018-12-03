@@ -35,7 +35,6 @@ public class Scanner
     private SourceFile sourceFile;
     private ErrorHandler errorHandler;
     private Character currentChar;
-    private boolean goToNextChar = true;
 
     private final Set<Character> charsEndingIdentifierOrKeyword =
             Set.of('"', '/', '+', '-', '>', '<', '=', '&', '{',
@@ -65,6 +64,7 @@ public class Scanner
             sourceFile = new SourceFile(filename);
         }
         catch (CompilationException e){
+            throw e;
 
         }
     }
@@ -85,27 +85,28 @@ public class Scanner
      * file, any calls to scan() result in a Token of kind EOF.
      */
     public Token scan() {
+        Character tempChar = currentChar;
 
-        if (this.goToNextChar) {
-            currentChar = sourceFile.getNextChar();
-        }
 
         if (currentChar.equals(SourceFile.eof)) return new Token(Token.Kind.EOF,
                 currentChar.toString(), this.sourceFile.getCurrentLineNumber());
 
         //gets rid of whitespace
-        else if (currentChar.equals('\t') || currentChar.equals('\r')
-                || currentChar.equals('\n') || currentChar.equals('\f') || currentChar.equals(' ')) {
-            this.goToNextChar = true;
-            return this.scan();
+        else {
+            while(currentChar.equals('\t') || currentChar.equals('\r')
+                    || currentChar.equals('\n') || currentChar.equals('\f') || currentChar.equals(' ')) {
+
+                currentChar = this.sourceFile.getNextChar();
+                tempChar = currentChar;
+            }
         }
 
 
-        switch(currentChar) {
+        switch(tempChar) {
 
             case('*'):
-                this.goToNextChar = true;
-                return new Token(Token.Kind.MULDIV, currentChar.toString(),
+                currentChar = sourceFile.getNextChar();
+                return new Token(Token.Kind.MULDIV, tempChar.toString(),
                         this.sourceFile.getCurrentLineNumber());
 
             case('"'): return this.getStringConstToken();
@@ -127,64 +128,64 @@ public class Scanner
             case('|'): return getBinaryLogicToken();
 
             case('{'):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.LCURLY,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case('}'):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.RCURLY,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case('['):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.LBRACKET,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case(']'):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.RBRACKET,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case('('):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.LPAREN,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case(')'):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.RPAREN,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case(';'):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.SEMICOLON,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case(':'):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.COLON,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case('!'): return this.getUnaryNotOrCompareToken();
 
             case('.'):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.DOT,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case(','):
-                this.goToNextChar = true;
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.COMMA,
-                    currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+                    tempChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             default:
 
                 if (Character.isDigit(currentChar)) return getIntConstToken();
                 else if (Character.isLetter(currentChar)) return getIdentifierOrKeywordToken();
                 else {
-                    this.goToNextChar = true;
-                    return new Token(Token.Kind.ERROR, currentChar.toString(),
+                    currentChar = sourceFile.getNextChar();
+                    return new Token(Token.Kind.ERROR, tempChar.toString(),
                             this.sourceFile.getCurrentLineNumber());
                 }
          }
@@ -204,7 +205,6 @@ public class Scanner
             case('*'): return this.getBlockCommentToken(prevChar);
 
             default:
-                this.goToNextChar = false;
                 return new Token(Token.Kind.MULDIV, prevChar.toString(),
                     this.sourceFile.getCurrentLineNumber());
         }
@@ -216,7 +216,6 @@ public class Scanner
      */
     private Token getSingleLineCommentToken() {
 
-        this.goToNextChar = false;
         String commentBody = "//";
         currentChar = this.sourceFile.getNextChar();    // move to first char after //
         while (!( currentChar.equals(SourceFile.eol) ||
@@ -226,7 +225,7 @@ public class Scanner
             currentChar = this.sourceFile.getNextChar();
         }
 
-        this.goToNextChar = currentChar.equals(SourceFile.eol);
+        if(currentChar.equals(SourceFile.eol)){currentChar = sourceFile.getNextChar();}
 
         return new Token(Token.Kind.COMMENT, commentBody,
                 this.sourceFile.getCurrentLineNumber());
@@ -253,7 +252,6 @@ public class Scanner
             commentBody = commentBody.concat(prevChar.toString());
             if (currentChar.equals(SourceFile.eof)) {
 
-                this.goToNextChar = false;
                 this.errorHandler.register(Error.Kind.LEX_ERROR,
                         this.sourceFile.getFilename(),
                         this.sourceFile.getCurrentLineNumber(),
@@ -271,9 +269,8 @@ public class Scanner
             prevChar = currentChar;
             currentChar = this.sourceFile.getNextChar();
         }
-        this.goToNextChar = true;
-        System.out.println("commentBody: " + commentBody);
-        System.out.println("curChar: " + currentChar);
+        currentChar = sourceFile.getNextChar();
+
         return new Token(Token.Kind.COMMENT, commentBody.concat(prevChar.toString()),
                 this.sourceFile.getCurrentLineNumber());
     }
@@ -290,15 +287,16 @@ public class Scanner
         currentChar = this.sourceFile.getNextChar();
 
         if (currentChar.equals(prevChar)) {
-            this.goToNextChar = true;
+            Character temp = currentChar;
+            currentChar = sourceFile.getNextChar();
 
-            String spelling = prevChar.toString().concat(currentChar.toString());
+            String spelling = prevChar.toString().concat(temp.toString());
             return new Token(Token.Kind.BINARYLOGIC, spelling,
                     this.sourceFile.getCurrentLineNumber());
         }
         else {
-            this.goToNextChar = false;
-            return new Token(Token.Kind.ERROR, currentChar.toString(),
+
+            return new Token(Token.Kind.ERROR, prevChar.toString(),
                     this.sourceFile.getCurrentLineNumber());
         }
     }
@@ -313,12 +311,11 @@ public class Scanner
         currentChar = this.sourceFile.getNextChar();
 
         if (currentChar.equals('=')) {
-            this.goToNextChar = true;
             String tokenSpelling = prevChar.toString().concat(currentChar.toString());
+            currentChar = sourceFile.getNextChar();
             return new Token(Token.Kind.COMPARE, tokenSpelling, this.sourceFile.getCurrentLineNumber());
         }
         else {
-            this.goToNextChar = false;
             return new Token(Token.Kind.COMPARE, prevChar.toString(), this.sourceFile.getCurrentLineNumber());
         }
     }
@@ -331,12 +328,11 @@ public class Scanner
     private Token getUnaryNotOrCompareToken(){
         currentChar = this.sourceFile.getNextChar();
         if (currentChar.equals('=')){
-            this.goToNextChar = true;
+            currentChar = sourceFile.getNextChar();
             return new Token(Token.Kind.COMPARE,
                     "!=", this.sourceFile.getCurrentLineNumber());
         }
         else {
-            this.goToNextChar = false;
             return new Token(Token.Kind.UNARYNOT,
                     currentChar.toString(), this.sourceFile.getCurrentLineNumber());
         }
@@ -353,14 +349,14 @@ public class Scanner
         currentChar = this.sourceFile.getNextChar();
 
         if (currentChar.equals(prevChar)) {
-            this.goToNextChar = true;
 
             String spelling = prevChar.toString().concat(currentChar.toString());
+            currentChar = sourceFile.getNextChar();
             return new Token(Token.Kind.COMPARE, spelling,
                     this.sourceFile.getCurrentLineNumber());
         }
         else {
-            this.goToNextChar = false;
+
             return new Token(Token.Kind.ASSIGN, prevChar.toString(),
                     this.sourceFile.getCurrentLineNumber());
         }
@@ -377,9 +373,9 @@ public class Scanner
         currentChar = this.sourceFile.getNextChar();
 
         if (currentChar.equals(prevChar)) {
-            this.goToNextChar = true;
 
             String spelling = prevChar.toString().concat(currentChar.toString());
+            currentChar = sourceFile.getNextChar();
             return new Token(Token.Kind.UNARYINCR, spelling,
                     this.sourceFile.getCurrentLineNumber());
         }
@@ -402,9 +398,9 @@ public class Scanner
         currentChar = this.sourceFile.getNextChar();
 
         if (currentChar.equals(prevChar)) {
-            this.goToNextChar = true;
 
             String spelling = prevChar.toString().concat(currentChar.toString());
+            currentChar = sourceFile.getNextChar();
             return new Token(Token.Kind.UNARYDECR, spelling,
                     this.sourceFile.getCurrentLineNumber());
         }
@@ -428,7 +424,6 @@ public class Scanner
             currentChar = this.sourceFile.getNextChar();
         }
 
-        this.goToNextChar = false;
         try {
             if (Integer.parseInt(spelling) < Math.pow(2, 31) - 1)
                 return new Token(Token.Kind.INTCONST, spelling, this.sourceFile.getCurrentLineNumber());
@@ -462,29 +457,29 @@ public class Scanner
                         this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
                         "UNSUPPORTED IDENTIFIER CHARACTER");
 
-                this.goToNextChar = true;
                 spelling= spelling.concat(currentChar.toString());
+                currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.ERROR, spelling,
                         this.sourceFile.getCurrentLineNumber());
             }
         }
 
 
-        while(Character.isLetterOrDigit(currentChar) || currentChar.equals('_')) {
-            spelling = spelling.concat(currentChar.toString());
-            currentChar = this.sourceFile.getNextChar();
-        }
-        if (charsEndingIdentifierOrKeyword.contains(currentChar)) {
-            this.goToNextChar = true;
-            spelling= spelling.concat(currentChar.toString());
-            return new Token(Token.Kind.ERROR, spelling,
-                    this.sourceFile.getCurrentLineNumber());
-        }
-        this.errorHandler.register(Error.Kind.LEX_ERROR,
-                this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
-                "UNSUPPORTED IDENTIFIER CHARACTER");
+//        while(Character.isLetterOrDigit(currentChar) || currentChar.equals('_')) {
+//            spelling = spelling.concat(currentChar.toString());
+//            currentChar = this.sourceFile.getNextChar();
+//        }
+//        if (charsEndingIdentifierOrKeyword.contains(currentChar)) {
+//            this.goToNextChar = true;
+//
+//            spelling= spelling.concat(currentChar.toString());
+//            return new Token(Token.Kind.ERROR, spelling,
+//                    this.sourceFile.getCurrentLineNumber());
+//        }
+//        this.errorHandler.register(Error.Kind.LEX_ERROR,
+//                this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
+//                "UNSUPPORTED IDENTIFIER CHARACTER");
 
-        this.goToNextChar = false;
         return new Token(Token.Kind.IDENTIFIER, spelling, this.sourceFile.getCurrentLineNumber());
     }
 
@@ -521,7 +516,7 @@ public class Scanner
 
         //add on end quote
         spelling = spelling.concat(currentChar.toString());
-        this.goToNextChar = true;
+        currentChar = sourceFile.getNextChar();
 
         //makes sure the string is less than 5000 chars
         if(spelling.length()<5000) {
@@ -536,7 +531,6 @@ public class Scanner
     }
 
     public Token setErrorTokenSetNextChar(String spelling){
-        this.goToNextChar = false;
         return new Token(Token.Kind.ERROR, spelling,
                 this.sourceFile.getCurrentLineNumber());
     }
@@ -555,6 +549,7 @@ public class Scanner
                 try {
 
                     scanner = new Scanner(args[i], errorHandler);
+
                 }
                 catch(CompilationException e){
                     System.out.println(e);
