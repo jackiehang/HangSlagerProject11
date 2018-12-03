@@ -324,7 +324,7 @@ public class Parser
         if (kind == BINARYLOGIC || kind == PLUSMINUS || kind ==  MULDIV || kind == COMPARE
             || kind == UNARYDECR || kind == UNARYINCR || kind == ASSIGN || kind == UNARYNOT) {
 
-            return new String(this.currentToken.getSpelling());
+            return this.currentToken.getSpelling();
         }
         return null;
     }
@@ -332,7 +332,7 @@ public class Parser
 
     private String parseIdentifier() {
         if (this.currentToken.kind == IDENTIFIER) {
-            return new String(this.currentToken.getSpelling());
+            return this.currentToken.getSpelling();
         }
         return null;
     }
