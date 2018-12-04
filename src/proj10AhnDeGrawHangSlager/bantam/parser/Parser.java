@@ -128,8 +128,9 @@ public class Parser
      * <WhileStmt> ::= WHILE ( <Expression> ) <Stmt>
      */
     private Stmt parseWhile() {
-
-
+        Expr expr = parseExpression();
+        Stmt stmt = parseStatement();
+        return new WhileStmt(this.currentToken.position,expr,stmt);
     }
 
 
@@ -267,8 +268,7 @@ public class Parser
      * <equalOrNotEqual> ::=  == | !=
      */
 	private Expr parseEqualityExpr() {
-        int position = currentToken.position;
-
+        int position = this.currentToken.position;
         Expr left = parseRelationalExpr();
         if (this.currentToken.spelling.equals("==") || this.currentToken.spelling.equals("!=")) {
             this.currentToken = scanner.scan();
