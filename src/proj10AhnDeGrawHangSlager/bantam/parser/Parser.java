@@ -82,7 +82,9 @@ public class Parser
      * <Field> ::= <Type> <Identifier> <InitialValue> ;
      * <InitialValue> ::= EMPTY | = <Expression>
      */
-     private Member parseMember() { }
+     private Member parseMember() {
+
+     }
 
 
     //-----------------------------------
@@ -174,7 +176,32 @@ public class Parser
      * <Increment> ::= EMPTY | <Expression>
      */
 	private Stmt parseFor() {
+	    Stmt stmt = null;
+        Expr initExpr = null;
+        Expr predExpr = null;
+        Expr updateExpr = null;
 
+        while (!this.currentToken.getSpelling().equals(";")){
+            this.currentToken = scanner.scan();
+            initExpr = parseExpression();
+        }
+
+        while (!this.currentToken.getSpelling().equals(";")){
+            this.currentToken = scanner.scan();
+            predExpr = parseExpression();
+        }
+
+        while (this.currentToken.kind != RPAREN){
+            this.currentToken = scanner.scan();
+            updateExpr = parseExpression();
+        }
+
+        while(this.currentToken.kind != RBRACKET){
+            this.currentToken = scanner.scan();
+            stmt = parseStatement();
+        }
+
+        return new ForStmt(this.currentToken.position, initExpr, predExpr, updateExpr, stmt);
     }
 
 
@@ -182,7 +209,14 @@ public class Parser
 	 * <BlockStmt> ::= { <Body> }
      * <Body> ::= EMPTY | <Stmt> <Body>
      */
-	private Stmt parseBlock() { }
+	private Stmt parseBlock() {
+        StmtList listOfNodes = new StmtList(this.currentToken.position);
+        while(this.currentToken.kind != RBRACKET){
+            currentToken = scanner.scan();
+            listOfNodes.addElement(parseStatement());
+        }
+        return new BlockStmt(this.currentToken.position, listOfNodes);
+    }
 
 
     /*
@@ -276,7 +310,6 @@ public class Parser
             Expr right = parseRelationalExpr();
             left = new BinaryLogicAndExpr(position, left, right);
         }
-
         return left;
     }
 
