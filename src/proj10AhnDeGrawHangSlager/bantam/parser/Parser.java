@@ -230,7 +230,16 @@ public class Parser
      * <equalOrNotEqual> ::=  == | !=
      */
 	private Expr parseEqualityExpr() {
+        int position = currentToken.position;
 
+        Expr left = parseRelationalExpr();
+        while (this.currentToken.spelling.equals("&&")) {
+            this.currentToken = scanner.scan();
+            Expr right = parseRelationalExpr();
+            left = new BinaryLogicAndExpr(position, left, right);
+        }
+
+        return left;
     }
 
 
@@ -238,14 +247,36 @@ public class Parser
 	 * <RelationalExpr> ::=<AddExpr> | <AddExpr> <ComparisonOp> <AddExpr>
      * <ComparisonOp> ::=  < | > | <= | >= | INSTANCEOF
      */
-	private Expr parseRelationalExpr() { }
+	private Expr parseRelationalExpr() {
+        int position = currentToken.position;
+
+        Expr left = parseAddExpr();
+        while (this.currentToken.spelling.equals("&&")) {
+            this.currentToken = scanner.scan();
+            Expr right = parseAddExpr();
+            left = new BinaryLogicAndExpr(position, left, right);
+        }
+
+        return left;
+    }
 
 
     /*
 	 * <AddExpr>::＝ <MultExpr> <MoreMultExpr>
      * <MoreMultExpr> ::= EMPTY | + <MultExpr> <MoreMultExpr> | - <MultExpr> <MoreMultExpr>
      */
-	private Expr parseAddExpr() { }
+	private Expr parseAddExpr() {
+        int position = currentToken.position;
+
+        Expr left = parseMultExpr();
+        while (this.currentToken.spelling.equals("&&")) {
+            this.currentToken = scanner.scan();
+            Expr right = parseMultExpr();
+            left = new BinaryLogicAndExpr(position, left, right);
+        }
+
+        return left;
+    }
 
 
     /*
