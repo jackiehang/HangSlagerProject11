@@ -209,7 +209,19 @@ public class Parser
 	 * <LogicalAND> ::= <ComparisonExpr> <LogicalANDRest>
      * <LogicalANDRest> ::= EMPTY |  && <ComparisonExpr> <LogicalANDRest>
      */
-	private Expr parseAndExpr() { }
+	private Expr parseAndExpr() {
+        int position = currentToken.position;
+
+        Expr left = parseEqualityExpr();
+        while (this.currentToken.spelling.equals("&&")) {
+            this.currentToken = scanner.scan();
+            Expr right = parseEqualityExpr();
+            left = new BinaryLogicAndExpr(position, left, right);
+        }
+
+        return left;
+
+    }
 
 
     /*
@@ -217,7 +229,9 @@ public class Parser
      *                     <RelationalExpr>
      * <equalOrNotEqual> ::=  == | !=
      */
-	private Expr parseEqualityExpr() { }
+	private Expr parseEqualityExpr() {
+
+    }
 
 
     /*
@@ -312,7 +326,9 @@ public class Parser
      * <Brackets> ::= EMPTY | [ ]
      */
 
-	private String parseType() { }
+	private String parseType() {
+
+    }
 
 
     //----------------------------------------
