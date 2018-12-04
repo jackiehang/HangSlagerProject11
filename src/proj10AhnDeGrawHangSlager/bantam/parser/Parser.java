@@ -173,7 +173,9 @@ public class Parser
      * <Terminate> ::= EMPTY | <Expression>
      * <Increment> ::= EMPTY | <Expression>
      */
-	private Stmt parseFor() { }
+	private Stmt parseFor() {
+
+    }
 
 
     /*
@@ -219,7 +221,6 @@ public class Parser
 	    while (this.currentToken.spelling.equals("=")){
 	        this.currentToken = scanner.scan();
 	        Expr right = parseExpression();
-
         }
         return left;
     }
@@ -366,14 +367,50 @@ public class Parser
      * <DispatchExpr> ::= <DispatchExprPrefix> <Identifier> ( <Arguments> )
      * <DispatchExprPrefix> ::= <Primary> . | EMPTY
      */
-	private Expr parsePrimary() { }
+	private Expr parsePrimary() {
+	    if (this.currentToken.kind == LCURLY) {
+	        return parseExpression();
+        }
+        switch(this.currentToken.kind) {
+            case INTCONST: return parseIntConst();
+            case BOOLEAN: return parseBoolean();
+            case STRCONST: return parseStringConst();
+            case VAR: return parseVarExpr();
+        }
+    }
+
+    /*
+     * <VarExpr> ::= <VarExprPrefix> <Identifier> <VarExprSuffix>
+     * <VarExprPrefix> ::= SUPER . | THIS . | EMPTY
+     * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
+     * <DispatchExpr> ::= <DispatchExprPrefix> <Identifier> ( <Arguments> )
+     * <DispatchExprPrefix> ::= <Primary> . | EMPTY
+     */
+    private Expr parseVarExpr() {
+//        Expr left = parseVarExprPrefix();
+//        Expr middle = parseIdentifier();
+//        Expr right = parseVarExprSuffix();
+    }
+
+    /*
+     * <VarExpr> ::= <VarExprPrefix> <Identifier> <VarExprSuffix>
+     * <VarExprPrefix> ::= SUPER . | THIS . | EMPTY
+     * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
+     * <DispatchExpr> ::= <DispatchExprPrefix> <Identifier> ( <Arguments> )
+     * <DispatchExprPrefix> ::= <Primary> . | EMPTY
+     */
+    private Expr parseVarExprPrefix() {
+
+    }
 
 
     /*
 	 * <Arguments> ::= EMPTY | <Expression> <MoreArgs>
      * <MoreArgs>  ::= EMPTY | , <Expression> <MoreArgs>
      */
-	private ExprList parseArguments() { }
+	private ExprList parseArguments() {
+	    return new ExprList(this.currentToken.position);
+    }
 
 
     /*
@@ -381,7 +418,13 @@ public class Parser
      * <MoreFormals> ::= EMPTY | , <Formal> <MoreFormals
      */
 	private FormalList parseParameters() {
-
+//	    if (currentToken.kind != RCURLY) {
+//            Formal left = parseFormal();
+//            while (this.currentToken.kind == COMMA) {
+//                Expr left =
+//            }
+//        }
+        return new FormalList(this.currentToken.position);
     }
 
 
@@ -389,8 +432,10 @@ public class Parser
 	 * <Formal> ::= <Type> <Identifier>
      */
 	private Formal parseFormal() {
-
-//        Formal formal = new Formal(this.currentToken.position, parseType(), )
+	    String type = parseType();
+	    this.currentToken = scanner.scan();
+        String identifier = parseIdentifier();
+        return new Formal(this.currentToken.position, type, identifier);
     }
 
 
@@ -410,7 +455,7 @@ public class Parser
                 return s;
             }
         }
-
+        return s;
         // TODO: else EMPTY or ERROR ?
     }
 
