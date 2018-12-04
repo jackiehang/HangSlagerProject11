@@ -153,13 +153,20 @@ public class Parser
     /*
 	 * BreakStmt> ::= BREAK ;
      */
-	private Stmt parseBreak() { }
+	private Stmt parseBreak() {
+	    this.currentToken = scanner.scan();
+	    return new BreakStmt(this.currentToken.position);
+    }
 
 
     /*
 	 * <ExpressionStmt> ::= <Expression> ;
      */
-	private ExprStmt parseExpressionStmt() { }
+	private ExprStmt parseExpressionStmt() {
+        this.currentToken = scanner.scan();
+        Expr expr = parseExpression();
+        return new ExprStmt(this.currentToken.position, expr);
+    }
 
 
     /*
@@ -340,7 +347,7 @@ public class Parser
         int position = currentToken.position;
 
         Expr left = parseMultExpr();
-        while (this.currentToken.spelling.equals("&&")) {
+        while (this.currentToken.spelling.equals("-") || this.currentToken.spelling.equals("-")) {
             this.currentToken = scanner.scan();
             Expr right = parseMultExpr();
             left = new BinaryLogicAndExpr(position, left, right);
