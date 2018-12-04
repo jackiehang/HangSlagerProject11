@@ -11,6 +11,7 @@
  */
 package proj10AhnDeGrawHangSlager.bantam.parser;
 
+import org.reactfx.value.Var;
 import proj10AhnDeGrawHangSlager.bantam.ast.*;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Scanner;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Token;
@@ -257,11 +258,15 @@ public class Parser
      */
 	private Expr parseExpression() {
 	    int position = currentToken.position;
-
-	    Expr left = parseOrExpr();
+        Expr right =null;
+	    VarExpr left = (VarExpr)parseOrExpr();
 	    while (this.currentToken.spelling.equals("=")){
 	        this.currentToken = scanner.scan();
-	        Expr right = parseExpression();
+	        right = parseExpression();
+        }
+
+        if(right!=null){
+            return new AssignExpr(this.currentToken.position,left.getRef().getExprType(), left.getName(), right  );
         }
         return left;
     }
