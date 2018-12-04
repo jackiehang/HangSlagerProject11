@@ -15,6 +15,7 @@ import proj10AhnDeGrawHangSlager.bantam.ast.*;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Scanner;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Token;
 import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
+import proj10AhnDeGrawHangSlager.bantam.visitor.Visitor;
 
 import static proj10AhnDeGrawHangSlager.bantam.lexer.Token.Kind;
 import static proj10AhnDeGrawHangSlager.bantam.lexer.Token.Kind.*;
@@ -126,13 +127,24 @@ public class Parser
     /*
      * <WhileStmt> ::= WHILE ( <Expression> ) <Stmt>
      */
-    private Stmt parseWhile() { }
+    private Stmt parseWhile() {
+
+
+    }
 
 
     /*
      * <ReturnStmt> ::= RETURN <Expression> ; | RETURN ;
      */
-	private Stmt parseReturn() { }
+	private Stmt parseReturn() {
+
+        this.currentToken = scanner.scan();
+        Expr right = null;
+        while (this.currentToken.kind != SEMICOLON) {
+            right = parseExpression();
+        }
+	    return new ReturnStmt(this.currentToken.position, right);
+    }
 
 
     /*
@@ -173,7 +185,22 @@ public class Parser
     /*
 	 * <IfStmt> ::= IF ( <Expr> ) <Stmt> | IF ( <Expr> ) <Stmt> ELSE <Stmt>
      */
-	private Stmt parseIf() { }
+	private Stmt parseIf() {
+
+	    Expr left = parseExpression();
+
+	    this.currentToken = scanner.scan();
+	    Stmt right = parseStatement();
+
+        this.currentToken = scanner.scan();
+        Stmt thenStmt = null;
+
+        if (this.currentToken.kind == ELSE) {
+            this.currentToken = scanner.scan();
+	        thenStmt = parseStatement();
+        }
+        return new IfStmt(this.currentToken.position, left, right, thenStmt);
+    }
 
 
     //-----------------------------------------
@@ -251,7 +278,7 @@ public class Parser
         int position = currentToken.position;
 
         Expr left = parseAddExpr();
-        while (this.currentToken.spelling.equals("&&")) {
+        while (this.currentToken.spelling.equals("+")) {
             this.currentToken = scanner.scan();
             Expr right = parseAddExpr();
             left = new BinaryLogicAndExpr(position, left, right);
@@ -343,13 +370,18 @@ public class Parser
 	 * <Parameters>  ::= EMPTY | <Formal> <MoreFormals>
      * <MoreFormals> ::= EMPTY | , <Formal> <MoreFormals
      */
-	private FormalList parseParameters() { }
+	private FormalList parseParameters() {
+
+    }
 
 
     /*
 	 * <Formal> ::= <Type> <Identifier>
      */
-	private Formal parseFormal() { }
+	private Formal parseFormal() {
+
+//        Formal formal = new Formal(this.currentToken.position, parseType(), )
+    }
 
 
     /*
@@ -358,7 +390,18 @@ public class Parser
      */
 
 	private String parseType() {
+        String s = parseIdentifier();
 
+        this.currentToken = scanner.scan();
+        if (this.currentToken.kind == LBRACKET) {
+            this.currentToken = scanner.scan();
+            if (this.currentToken.kind == RBRACKET) {
+                s = s.concat("[]");
+                return s;
+            }
+        }
+
+        // TODO: else EMPTY or ERROR ?
     }
 
 
