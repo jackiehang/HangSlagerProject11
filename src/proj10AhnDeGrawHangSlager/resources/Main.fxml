@@ -29,8 +29,8 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
       minWidth="-Infinity" prefHeight="800.0"
       prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.1"
-      xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="proj10AhnDeGrawHangSlager.MasterController"
+      xmlns:fx="http://javafx.com/fxml/1"
       fx:id="vBox"
       stylesheets="@Main.css">
     <MenuBar>

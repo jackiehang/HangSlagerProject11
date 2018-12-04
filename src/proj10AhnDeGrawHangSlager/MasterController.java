@@ -70,15 +70,13 @@ public class MasterController {
     // this line from JianQuanMarcello project 6
     private ContextMenuController contextMenuController;
 
-
-
-
-
     @FXML
     public void initialize(){
 
         editController = new EditController(javaTabPane, findTextEntry, findPrevBtn, findNextBtn, replaceTextEntry);
-        fileController = new FileController(vBox,javaTabPane);
+        this.fileController = new FileController(vBox,javaTabPane);
+        System.out.println("FC0: " + fileController);
+
 
         SimpleListProperty<Tab> listProperty = new SimpleListProperty<Tab> (javaTabPane.getTabs());
         editMenu.disableProperty().bind(listProperty.emptyProperty());
@@ -86,12 +84,30 @@ public class MasterController {
         saveAsMenuItem.disableProperty().bind(listProperty.emptyProperty());
         closeMenuItem.disableProperty().bind(listProperty.emptyProperty());
         scanButton.disableProperty().bind(listProperty.emptyProperty());
-
+        System.out.println("THIS0: " + this);
 
         // this line from JianQuanMarcello project 6
         this.setupContextMenuController();
 
     }
+
+//    public MasterController() {
+//        editController = new EditController(javaTabPane, findTextEntry, findPrevBtn, findNextBtn, replaceTextEntry);
+//        this.fileController = new FileController(vBox,javaTabPane);
+//        System.out.println("FC0: " + fileController);
+//
+//
+//        SimpleListProperty<Tab> listProperty = new SimpleListProperty<Tab> (javaTabPane.getTabs());
+//        editMenu.disableProperty().bind(listProperty.emptyProperty());
+//        saveMenuItem.disableProperty().bind(listProperty.emptyProperty());
+//        saveAsMenuItem.disableProperty().bind(listProperty.emptyProperty());
+//        closeMenuItem.disableProperty().bind(listProperty.emptyProperty());
+//        scanButton.disableProperty().bind(listProperty.emptyProperty());
+//        System.out.println("THIS0: " + this);
+//
+//        // this line from JianQuanMarcello project 6
+//        this.setupContextMenuController();
+//    }
 
 
     /**
@@ -231,7 +247,9 @@ public class MasterController {
      * Returns when the user cancels exiting any tab.
      */
     @FXML public void handleExit(Event event) {
-        fileController.handleExit(event);
+        System.out.println("FC: " + fileController);
+        System.out.println("THIS1: " + this);
+        this.fileController.handleExit(event);
     }
 
     /**

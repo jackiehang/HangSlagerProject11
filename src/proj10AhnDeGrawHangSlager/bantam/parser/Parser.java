@@ -15,6 +15,7 @@ import org.reactfx.value.Var;
 import proj10AhnDeGrawHangSlager.bantam.ast.*;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Scanner;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Token;
+import proj10AhnDeGrawHangSlager.bantam.util.Error;
 import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
 import proj10AhnDeGrawHangSlager.bantam.visitor.Visitor;
 
@@ -49,7 +50,7 @@ public class Parser
     }
 
 
-    /* 
+    /*
      * <Program> ::= <Class> | <Class> <Program>
      */
     private Program parseProgram() {
@@ -374,19 +375,39 @@ public class Parser
     /*
 	 * <NewCastOrUnary> ::= < NewExpression> | <CastExpression> | <UnaryPrefix>
      */
-	private Expr parseNewCastOrUnary() { }
+	private Expr parseNewCastOrUnary() {
+	    if (this.currentToken.kind == CAST) return parseCast();
+	    else if (this.currentToken.kind == )
+    }
 
 
     /*
 	 * <NewExpression> ::= NEW <Identifier> ( ) | NEW <Identifier> [ <Expression> ]
      */
-	private Expr parseNew() { }
+	private Expr parseNew() {
+
+    }
 
 
     /*
 	 * <CastExpression> ::= CAST ( <Type> , <Expression> )
      */
-	private Expr parseCast() { }
+	private Expr parseCast() {
+        if (this.currentToken.kind == LPAREN) {
+            String left = parseType();
+            this.currentToken = scanner.scan();
+            if (this.currentToken.kind == COMMA) {
+                this.currentToken = scanner.scan();
+                Expr right = parseExpression();
+                this.currentToken = scanner.scan();
+                if (this.currentToken.kind == RPAREN) {
+                    return new CastExpr(this.currentToken.position, left, right);
+                }
+            }
+        }
+        this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CAST EXPRESSION");
+        return null;
+    }
 
 
     /*
@@ -400,7 +421,16 @@ public class Parser
 	 * <UnaryPostfix> ::= <Primary> <PostfixOp>
      * <PostfixOp> ::= ++ | -- | EMPTY
      */
-	private Expr parseUnaryPostfix() { }
+	private Expr parseUnaryPostfix() {
+	    Expr left = parsePrimary();
+	    this.currentToken = scanner.scan();
+	    Expr right = null;
+	    switch(currentToken.kind) {
+            case UNARYINCR: return new UnaryIncrExpr(this.currentToken.position, left, true);
+            case UNARYDECR: return new UnaryDecrExpr(this.currentToken.position, left, true);
+        }
+        return left;
+    }
 
 
     /*
@@ -427,9 +457,6 @@ public class Parser
     /*
      * <VarExpr> ::= <VarExprPrefix> <Identifier> <VarExprSuffix>
      * <VarExprPrefix> ::= SUPER . | THIS . | EMPTY
-     * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
-     * <DispatchExpr> ::= <DispatchExprPrefix> <Identifier> ( <Arguments> )
-     * <DispatchExprPrefix> ::= <Primary> . | EMPTY
      */
     private Expr parseVarExpr() {
 //        Expr left = parseVarExprPrefix();
@@ -438,16 +465,17 @@ public class Parser
     }
 
     /*
-     * <VarExpr> ::= <VarExprPrefix> <Identifier> <VarExprSuffix>
      * <VarExprPrefix> ::= SUPER . | THIS . | EMPTY
      * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
      * <DispatchExpr> ::= <DispatchExprPrefix> <Identifier> ( <Arguments> )
      * <DispatchExprPrefix> ::= <Primary> . | EMPTY
      */
-    private Expr parseVarExprPrefix() {
-
+    private String parseVarExprPrefix() {
+        if (this.currentToken.kind == IDENTIFIER) {
+            return parseIdentifier();
+        }
+        return null;
     }
-
 
     /*
 	 * <Arguments> ::= EMPTY | <Expression> <MoreArgs>
@@ -463,13 +491,17 @@ public class Parser
      * <MoreFormals> ::= EMPTY | , <Formal> <MoreFormals
      */
 	private FormalList parseParameters() {
-//	    if (currentToken.kind != RCURLY) {
-//            Formal left = parseFormal();
-//            while (this.currentToken.kind == COMMA) {
-//                Expr left =
-//            }
-//        }
-        return new FormalList(this.currentToken.position);
+
+	    FormalList formalList = new FormalList(this.currentToken.position);
+	    Formal left = parseFormal();
+	    formalList.addElement(left);
+
+        this.currentToken = scanner.scan();
+	    while (this.currentToken.kind == COMMA) {
+            formalList.addElement(parseFormal());
+            this.currentToken = scanner.scan();
+        }
+        return formalList;
     }
 
 
@@ -488,7 +520,6 @@ public class Parser
 	 * <Type> ::= <Identifier> <Brackets>
      * <Brackets> ::= EMPTY | [ ]
      */
-
 	private String parseType() {
         String s = parseIdentifier();
 
@@ -501,7 +532,6 @@ public class Parser
             }
         }
         return s;
-        // TODO: else EMPTY or ERROR ?
     }
 
 
