@@ -72,8 +72,36 @@ public class Parser
      * <MemberList> ::= EMPTY | <Member> <MemberList>
      */
     private Class_ parseClass() {
-        Class_ cls;
+        if (this.currentToken.kind != CLASS) {
+            this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CLASS DECLARATION");
+            return null;
+        }
+        this.currentToken = scanner.scan();
+        String left = parseIdentifier();
 
+        this.currentToken = scanner.scan();
+        String parent = null;
+        if (this.currentToken.kind == EXTENDS) {
+            this.currentToken = scanner.scan();
+            parent = parseIdentifier();
+        }
+        this.currentToken = scanner.scan();
+        if (this.currentToken.kind == LCURLY) {
+            this.currentToken = scanner.scan();
+
+            MemberList memberList = new MemberList(this.currentToken.position);
+            Member member = parseMember();
+            while (member != null) {
+                memberList.addElement(member);
+                this.currentToken = scanner.scan();
+                member = parseMember();
+            }
+            return new Class_(this.currentToken.position, left.concat(".java"), left, parent, memberList);
+        }
+        else {
+            this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CLASS DECLARATION");
+            return null;
+        }
     }
 
 
@@ -84,8 +112,34 @@ public class Parser
      * <InitialValue> ::= EMPTY | = <Expression>
      */
      private Member parseMember() {
+         String type = parseType();
+         this.currentToken = scanner.scan();
 
+         String name = parseIdentifier();
+         this.currentToken = scanner.scan();
 
+         if (this.currentToken.kind == LPAREN) {
+
+             FormalList params = parseParameters();
+             this.currentToken = scanner.scan();
+
+             if (this.currentToken.kind == RPAREN) {
+                 BlockStmt block = (BlockStmt)parseBlock();
+                 return new Method(this.currentToken.position, type, name, params, block.getStmtList());
+             }
+             else {
+                 this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID MEMBER DECLARATION");
+                 return null;
+             }
+         }
+         else {
+             Expr init = null;
+             if (this.currentToken.kind == ASSIGN) {
+                this.currentToken = scanner.scan();
+                init = parseExpression();
+             }
+             return new Field(this.currentToken.position, type, name, init);
+         }
      }
 
 
