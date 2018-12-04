@@ -74,7 +74,6 @@ public class Parser
     private Class_ parseClass() {
         Class_ cls;
 
-
     }
 
 
@@ -175,7 +174,9 @@ public class Parser
 	 * <DeclStmt> ::= VAR <Identifier> = <Expression> ;
      * every local variable must be initialized
      */
-	private Stmt parseDeclStmt() { }
+	private Stmt parseDeclStmt() {
+
+    }
 
 
     /*
@@ -482,6 +483,15 @@ public class Parser
      * <MoreArgs>  ::= EMPTY | , <Expression> <MoreArgs>
      */
 	private ExprList parseArguments() {
+	    ExprList eList = new ExprList(this.currentToken.position);
+	    Expr expr = parseExpression();
+	    eList.addElement(expr);
+
+        this.currentToken = scanner.scan();
+	    while(this.currentToken.kind == COMMA){
+	        this.currentToken = scanner.scan();
+	        eList.addElement(parseExpression());
+        }
 	    return new ExprList(this.currentToken.position);
     }
 
