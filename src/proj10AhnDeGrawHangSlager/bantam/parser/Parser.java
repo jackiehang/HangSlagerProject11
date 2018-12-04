@@ -211,7 +211,17 @@ public class Parser
 	 * <Expression> ::= <LogicalOrExpr> <OptionalAssignment>
      * <OptionalAssignment> ::= EMPTY | = <Expression>
      */
-	private Expr parseExpression() { }
+	private Expr parseExpression() {
+	    int position = currentToken.position;
+
+	    Expr left = parseOrExpr();
+	    while (this.currentToken.spelling.equals("=")){
+	        this.currentToken = scanner.scan();
+	        Expr right = parseExpression();
+
+        }
+        return left;
+    }
 
 
     /*
@@ -260,7 +270,7 @@ public class Parser
         int position = currentToken.position;
 
         Expr left = parseRelationalExpr();
-        while (this.currentToken.spelling.equals("&&")) {
+        if (this.currentToken.spelling.equals("==") || this.currentToken.spelling.equals("!=")) {
             this.currentToken = scanner.scan();
             Expr right = parseRelationalExpr();
             left = new BinaryLogicAndExpr(position, left, right);
