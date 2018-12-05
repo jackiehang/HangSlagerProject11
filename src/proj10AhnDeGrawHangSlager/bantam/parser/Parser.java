@@ -315,10 +315,9 @@ public class Parser
      * <OptionalAssignment> ::= EMPTY | = <Expression>
      */
 	private Expr parseExpression() {
-	    int position = currentToken.position;
-        Expr right =null;
+        Expr right = null;
 	    VarExpr left = (VarExpr)parseOrExpr();
-	    while (this.currentToken.spelling.equals("=")){
+	    while (this.currentToken.kind == ASSIGN){
 	        this.currentToken = scanner.scan();
 	        right = parseExpression();
         }
@@ -338,7 +337,7 @@ public class Parser
         int position = currentToken.position;
 
         Expr left = parseAndExpr();
-        while (this.currentToken.spelling.equals("||")) {
+        while (this.currentToken.kind == BINARYLOGIC) {
             this.currentToken = scanner.scan();
             Expr right = parseAndExpr();
             left = new BinaryLogicOrExpr(position, left, right);
@@ -356,7 +355,7 @@ public class Parser
         int position = currentToken.position;
 
         Expr left = parseEqualityExpr();
-        while (this.currentToken.spelling.equals("&&")) {
+        while (this.currentToken.kind == BINARYLOGIC) {
             this.currentToken = scanner.scan();
             Expr right = parseEqualityExpr();
             left = new BinaryLogicAndExpr(position, left, right);
@@ -375,10 +374,10 @@ public class Parser
 	private Expr parseEqualityExpr() {
         int position = this.currentToken.position;
         Expr left = parseRelationalExpr();
-        if (this.currentToken.spelling.equals("==") || this.currentToken.spelling.equals("!=")) {
+        if (this.currentToken.kind == COMPARE) {
             this.currentToken = scanner.scan();
             Expr right = parseRelationalExpr();
-            left = new BinaryLogicAndExpr(position, left, right);
+            left = new BinaryCompEqExpr(position, left, right);
         }
         return left;
     }
@@ -392,10 +391,10 @@ public class Parser
         int position = currentToken.position;
 
         Expr left = parseAddExpr();
-        while (this.currentToken.spelling.equals("+")) {
+        while (this.currentToken.kind == COMPARE || this.currentToken.kind == INSTANCEOF) {
             this.currentToken = scanner.scan();
             Expr right = parseAddExpr();
-            left = new BinaryLogicAndExpr(position, left, right);
+            left = new BinaryCompEqExpr(position, left, right);
         }
 
         return left;
@@ -410,7 +409,7 @@ public class Parser
         int position = currentToken.position;
 
         Expr left = parseMultExpr();
-        while (this.currentToken.spelling.equals("-") || this.currentToken.spelling.equals("-")) {
+        while (this.currentToken.kind == PLUSMINUS) {
             this.currentToken = scanner.scan();
             Expr right = parseMultExpr();
             left = new BinaryLogicAndExpr(position, left, right);
@@ -542,7 +541,6 @@ public class Parser
 	    ExprList eList = new ExprList(this.currentToken.position);
 	    Expr expr = parseExpression();
 	    eList.addElement(expr);
-
         this.currentToken = scanner.scan();
 	    while(this.currentToken.kind == COMMA){
 	        this.currentToken = scanner.scan();
