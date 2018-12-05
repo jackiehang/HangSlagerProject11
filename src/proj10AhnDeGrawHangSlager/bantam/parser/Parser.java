@@ -230,8 +230,19 @@ public class Parser
      * every local variable must be initialized
      */
 	private Stmt parseDeclStmt() {
-
-
+        String name = null;
+        Expr init = null;
+	    if (this.currentToken.kind == VAR){
+	        while (this.currentToken.kind != COMPARE){
+                name = parseIdentifier();
+                this.currentToken = scanner.scan();
+            }
+	        while (this.currentToken.kind != SEMICOLON) {
+                init = parseExpression();
+                this.currentToken = scanner.scan();
+            }
+        }
+        return new DeclStmt(this.currentToken.position,name,init);
     }
 
 
@@ -441,7 +452,10 @@ public class Parser
 	 * <NewExpression> ::= NEW <Identifier> ( ) | NEW <Identifier> [ <Expression> ]
      */
 	private Expr parseNew() {
+	    String name = null;
+        if (this.currentToken.kind == NEW){
 
+        }
     }
 
 
