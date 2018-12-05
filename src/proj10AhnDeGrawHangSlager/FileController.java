@@ -366,13 +366,20 @@ public class FileController {
         else if (saveStatus == "yes") handleScan(event);
     }
 
+    public void handleScanAndParse(Event event) {
+        this.handleScan(event);
+        //TODO: FINISH DIS
+
+    }
+
+
 
     /**
      *
      * @return the list of errors from the most recent scan performed on a file
      * return value will be null if there is no valid file open to scan
      */
-    public List<Error> getScanningErrors() {
+    public List<Error> getErrors() {
         if (this.scanner == null) return null;
         return this.errorHandler.getErrorList();
     }

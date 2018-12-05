@@ -10,11 +10,6 @@
  * Date: October 12, 2018
  */
 
-#compileButton {
-    -fx-font: 13 arial;
-    -fx-base: lightblue;
-    -fx-background-radius: 100;
-}
 
 #scanButton {
     -fx-font: 13 arial;
@@ -22,15 +17,9 @@
     -fx-background-radius: 100;
 }
 
-#compileRunButton {
+#scanAndParseButton {
     -fx-font: 13 arial;
     -fx-base: lightgreen;
-    -fx-background-radius: 100;
-}
-
-#stopButton {
-    -fx-font: 13 arial;
-    -fx-base: pink;
     -fx-background-radius: 100;
 }
 

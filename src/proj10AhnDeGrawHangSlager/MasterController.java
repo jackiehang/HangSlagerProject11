@@ -162,7 +162,7 @@ public class MasterController {
             return;
         }
 
-        List<Error> scanningErrors = fileController.getScanningErrors();
+        List<Error> scanningErrors = fileController.getErrors();
 
         if (scanningErrors != null) {
 
@@ -173,6 +173,30 @@ public class MasterController {
                     " illegal tokens were found.", "ERROR");
         }
     }
+
+    @FXML public void handleScanAndParse(Event event) throws InterruptedException {
+
+        this.console.clear();
+        try {
+            this.fileController.handleScanAndParse(event);
+        } catch (CompilationException e) {
+            this.console.writeLine(e.toString() + "\n", "ERROR");
+            return;
+        }
+
+        List<Error> scanningAndParsingErrors = fileController.getErrors();
+
+        if (scanningAndParsingErrors != null) {
+
+            for (Error e : scanningAndParsingErrors)
+                this.console.writeLine(e.toString() + "\n", "ERROR");
+
+            this.console.writeLine(scanningAndParsingErrors.size() +
+                    " illegal tokens were found.", "ERROR");
+        }
+    }
+
+
 
     /**
      * Handles the find and replace button action.
