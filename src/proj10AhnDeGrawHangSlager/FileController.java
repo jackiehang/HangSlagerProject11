@@ -37,6 +37,7 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Scanner;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Token;
+import proj10AhnDeGrawHangSlager.bantam.parser.Parser;
 import proj10AhnDeGrawHangSlager.bantam.util.CompilationException;
 import proj10AhnDeGrawHangSlager.bantam.util.Error;
 import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
@@ -65,6 +66,7 @@ public class FileController {
 
 
     private Scanner scanner;
+    private Parser parser;
     private ErrorHandler errorHandler;
 
     /**
@@ -329,7 +331,17 @@ public class FileController {
      * @param event press of the Scan button triggering the handleScan method
      */
     public void handleScan(Event event) {
+        scanOrParseHelper(event, "SCAN_ONLY" );
 
+    }
+    public void handleScanAndParse (Event event) {
+
+        scanOrParseHelper(event, "SCAN_AND_PARSE" );
+
+
+    }
+
+    public void scanOrParseHelper(Event event, String scanOrParse ){
         JavaTab curTab = (JavaTab)this.javaTabPane.getSelectionModel().getSelectedItem();
 
 
@@ -337,19 +349,32 @@ public class FileController {
             String filename = this.tabFilepathMap.get(curTab);
             try {
                 this.errorHandler = new ErrorHandler();
-                this.scanner = new Scanner(filename, this.errorHandler);
+                if(scanOrParse.equals("SCAN_ONLY")) {
+                    this.scanner = new Scanner(filename, this.errorHandler);
+                }
+                else{
+                    this.parser = new Parser(this.errorHandler);
+                }
+
             }
             catch(CompilationException e){
                 throw e;
             }
 
-            this.handleNew(null);
-            curTab = (JavaTab) this.javaTabPane.getSelectionModel().getSelectedItem();
-            Token nextToken;
-            while ( (nextToken = scanner.scan()).kind != Token.Kind.EOF) {
-                curTab.getCodeArea().appendText(nextToken.toString()+"\n");
+            if(scanOrParse.equals("SCAN_ONLY")) {
+                this.handleNew(null);
+                curTab = (JavaTab) this.javaTabPane.getSelectionModel().getSelectedItem();
+                Token nextToken;
+                while ( (nextToken = scanner.scan()).kind != Token.Kind.EOF) {
+                    curTab.getCodeArea().appendText(nextToken.toString()+"\n");
+                }
+                return;
             }
-            return;
+
+            else{
+                this.parser.parse(filename);
+            }
+
         }
 
         String saveStatus = this.askSaveAndScan(event);
@@ -359,18 +384,15 @@ public class FileController {
         }
         else if (saveStatus == "no") {
             if (tabFilepathMap.get(curTab) == null) {
-                System.out.println("RETURNING");
                 return;
             }
         }
-        else if (saveStatus == "yes") handleScan(event);
-    }
-
-    public void handleScanAndParse(Event event) {
-        this.handleScan(event);
-        //TODO: FINISH DIS
+        else if (saveStatus == "yes"){
+            scanOrParseHelper(event, scanOrParse);
+        }
 
     }
+
 
 
 
