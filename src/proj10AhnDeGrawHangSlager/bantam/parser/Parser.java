@@ -187,6 +187,7 @@ public class Parser
      */
     private Stmt parseWhile() {
         Expr expr = parseExpression();
+        this.currentToken = scanner.scan();
         Stmt stmt = parseStatement();
         return new WhileStmt(this.currentToken.position,expr,stmt);
     }
@@ -201,6 +202,7 @@ public class Parser
         Expr right = null;
         while (this.currentToken.kind != SEMICOLON) {
             right = parseExpression();
+            this.currentToken = scanner.scan();
         }
 	    return new ReturnStmt(this.currentToken.position, right);
     }
@@ -211,6 +213,9 @@ public class Parser
      */
 	private Stmt parseBreak() {
 	    this.currentToken = scanner.scan();
+	    if (this.currentToken.kind != SEMICOLON) {
+	        this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID BREAK STATEMENT");
+        }
 	    return new BreakStmt(this.currentToken.position);
     }
 
@@ -337,7 +342,7 @@ public class Parser
             return new AssignExpr(this.currentToken.position,left.getRef().getExprType(), left.getName(), right  );
         }
         return left;
-    }
+    } //-----------------------------------------------------------------
 
 
     /*
@@ -452,10 +457,38 @@ public class Parser
 	 * <NewExpression> ::= NEW <Identifier> ( ) | NEW <Identifier> [ <Expression> ]
      */
 	private Expr parseNew() {
-	    String name = null;
-        if (this.currentToken.kind == NEW){
 
+        if (this.currentToken.kind == NEW){
+            this.currentToken = scanner.scan();
+            String identifier = parseIdentifier();
+
+            this.currentToken = scanner.scan();
+            if (this.currentToken.kind == LPAREN) {
+
+                this.currentToken = scanner.scan();
+                if (this.currentToken.kind == RPAREN) {
+                    return new NewExpr(this.currentToken.position, identifier);
+                }
+                else {
+                    this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID NEW EXPRESSION");
+                    return null;
+                }
+            }
+            else if (this.currentToken.kind == LBRACKET) {
+                this.currentToken = scanner.scan();
+                Expr expression = parseExpression();
+                this.currentToken = scanner.scan();
+                if (this.currentToken.kind == RBRACKET) {
+                    return new NewArrayExpr(this.currentToken.position, identifier, expression);
+                }
+                else {
+                    this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID NEW ARRAY EXPRESSION");
+                    return null;
+                }
+            }
         }
+        this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID NEW EXPRESSION");
+        return null;
     }
 
 
