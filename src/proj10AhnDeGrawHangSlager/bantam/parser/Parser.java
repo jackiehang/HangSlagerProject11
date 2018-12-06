@@ -404,13 +404,26 @@ public class Parser
      * <ComparisonOp> ::=  < | > | <= | >= | INSTANCEOF
      */
 	private Expr parseRelationalExpr() {
-        int position = currentToken.position;
 
         Expr left = parseAddExpr();
-        while (this.currentToken.kind == COMPARE || this.currentToken.kind == INSTANCEOF) {
-            this.currentToken = scanner.scan();
-            Expr right = parseAddExpr();
-            left = new BinaryCompEqExpr(position, left, right);
+        if (this.currentToken.kind == COMPARE || this.currentToken.kind == INSTANCEOF) {
+            switch(currentToken.getSpelling()) {
+                case "<":
+                    this.currentToken = scanner.scan();
+                    return new BinaryCompLtExpr(this.currentToken.position, left, parseAddExpr());
+                case ">":
+                    this.currentToken = scanner.scan();
+                    return new BinaryCompGtExpr(this.currentToken.position, left, parseAddExpr());
+                case "<=":
+                    this.currentToken = scanner.scan();
+                    return new BinaryCompLeqExpr(this.currentToken.position, left, parseAddExpr());
+                case ">=":
+                    this.currentToken = scanner.scan();
+                    return new BinaryCompGeqExpr(this.currentToken.position, left, parseAddExpr());
+                case "instanceof":
+                    this.currentToken = scanner.scan();
+                    return new InstanceofExpr(this.currentToken.position, left, parseType());
+            }
         }
 
         return left;
@@ -422,16 +435,14 @@ public class Parser
      * <MoreMultExpr> ::= EMPTY | + <MultExpr> <MoreMultExpr> | - <MultExpr> <MoreMultExpr>
      */
 	private Expr parseAddExpr() {
-        int position = currentToken.position;
 
         Expr left = parseMultExpr();
+        Expr right = null;
         while (this.currentToken.kind == PLUSMINUS) {
             this.currentToken = scanner.scan();
-            Expr right = parseMultExpr();
-            left = new BinaryLogicAndExpr(position, left, right);
+            right = parseAddExpr();
         }
-
-        return left;
+        return new BinaryArithPlusExpr(this.currentToken.position, left, right);
     }
 
 
@@ -443,8 +454,27 @@ public class Parser
      *               EMPTY
      */
 	private Expr parseMultExpr() {
-
-
+	    Expr left = parseNewCastOrUnary();
+	    this.currentToken = scanner.scan();
+	    while (this.currentToken.kind == MULDIV) {
+	        switch(this.currentToken.getSpelling()) {
+                case "*":
+                    this.currentToken = scanner.scan();
+                    return new BinaryArithTimesExpr(this.currentToken.position, left, parseMultExpr());
+                case "/":
+                    this.currentToken = scanner.scan();
+                    return new BinaryArithDivideExpr(this.currentToken.position, left, parseMultExpr());
+                case "%":
+                    this.currentToken = scanner.scan();
+                    return new BinaryArithDivideExpr(this.currentToken.position, left, parseMultExpr());
+                default:
+                    this.errorHandler.register(Error.Kind.LEX_ERROR,
+                            "MULDIV TOKEN IS : " + this.currentToken.getSpelling());
+                    break;
+            }
+//            this.currentToken = scanner.scan();
+        }
+        return null;
     }
 
     /*
@@ -539,7 +569,7 @@ public class Parser
 	private Expr parseUnaryPostfix() {
 	    Expr left = parsePrimary();
 	    this.currentToken = scanner.scan();
-	    Expr right = null;
+
 	    switch(currentToken.kind) {
             case UNARYINCR: return new UnaryIncrExpr(this.currentToken.position, left, true);
             case UNARYDECR: return new UnaryDecrExpr(this.currentToken.position, left, true);
