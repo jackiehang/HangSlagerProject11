@@ -14,7 +14,6 @@ import proj10AhnDeGrawHangSlager.bantam.util.CompilationException;
 import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
 
 import java.io.*;
-import java.util.List;
 import java.util.Set;
 
 import proj10AhnDeGrawHangSlager.bantam.util.Error;
@@ -501,7 +500,7 @@ public class Scanner
                 this.errorHandler.register(Error.Kind.LEX_ERROR,
                         this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
                         "UNCLOSED QUOTE");
-                return setErrorTokenSetNextChar(spelling);
+                return createErrorToken(spelling);
             }
             else if (currentChar.equals('\\')){
                 spelling = spelling.concat(currentChar.toString());
@@ -524,11 +523,11 @@ public class Scanner
             this.errorHandler.register(Error.Kind.LEX_ERROR,
                     this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
                     "STRING EXCEEDS MAX CHAR LENGTH 5000");
-            return setErrorTokenSetNextChar(spelling);
+            return createErrorToken(spelling);
         }
     }
 
-    public Token setErrorTokenSetNextChar(String spelling){
+    public Token createErrorToken(String spelling){
         return new Token(Token.Kind.ERROR, spelling,
                 this.sourceFile.getCurrentLineNumber());
     }

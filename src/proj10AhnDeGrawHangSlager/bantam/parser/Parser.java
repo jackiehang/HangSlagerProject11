@@ -46,6 +46,7 @@ public class Parser
      */
     public Program parse(String filename) {
         this.scanner = new Scanner(filename, this.errorHandler);
+        this.currentToken = scanner.scan();
         return parseProgram();
     }
 
@@ -54,6 +55,7 @@ public class Parser
      * <Program> ::= <Class> | <Class> <Program>
      */
     private Program parseProgram() {
+
         int position = currentToken.position;
         ClassList classList = new ClassList(position);
 
@@ -96,7 +98,7 @@ public class Parser
                 this.currentToken = scanner.scan();
                 member = parseMember();
             }
-            return new Class_(this.currentToken.position, left.concat(".java"), left, parent, memberList);
+            return new Class_(this.currentToken.position, left.concat(".btm"), left, parent, memberList);
         }
         else {
             this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CLASS DECLARATION");
@@ -155,7 +157,6 @@ public class Parser
             switch (currentToken.kind) {
                 case IF:
                     stmt = parseIf();
-                    break;
                 case LCURLY:
                     stmt = parseBlock();
                     break;
@@ -178,7 +179,14 @@ public class Parser
                     stmt = parseExpressionStmt();
             }
 
-            return stmt;
+            if(stmt !=null){
+                return stmt;
+            }
+            else{
+                this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID STATEMENT");
+                return null;
+            }
+
     }
 
 
@@ -618,7 +626,7 @@ public class Parser
      * <DispatchExprPrefix> ::= <Primary> . | EMPTY
      */
 	private Expr parsePrimary() {
-	    if (this.currentToken.kind == LCURLY) {
+	    if (this.currentToken.kind == LPAREN) {
 	        return parseExpression();
         }
         switch(this.currentToken.kind) {
@@ -636,9 +644,9 @@ public class Parser
      * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
      */
     private Expr parseVarExpr() {
-//        Expr left = parseVarExprPrefix();
-//        Expr middle = parseIdentifier();
-//        Expr right = parseVarExprSuffix();
+
+        return null;
+
     }
 
     /*
@@ -646,8 +654,25 @@ public class Parser
      * <DispatchExprPrefix> ::= <Primary> . | EMPTY
      */
     private Expr parseDispatchExpr() {
+        Expr expr = null;
+        ExprList args = null;
+        String id = null;
 
-        return null;
+        if(this.currentToken.kind == IDENTIFIER){
+            id = parseIdentifier();
+        }
+        else{
+            expr = parsePrimary();
+            this.currentToken = scanner.scan();
+        }
+
+        this.currentToken = scanner.scan();
+        if(this.currentToken.kind == LPAREN){
+            this.currentToken = scanner.scan();
+            args= parseArguments();
+        }
+
+        return new DispatchExpr(this.currentToken.position,expr,id,args);
     }
 
     /*
