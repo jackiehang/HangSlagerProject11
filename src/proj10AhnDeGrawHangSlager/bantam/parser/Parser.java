@@ -626,12 +626,14 @@ public class Parser
             case BOOLEAN: return parseBoolean();
             case STRCONST: return parseStringConst();
             case VAR: return parseVarExpr();
+            default: return parseDispatchExpr();
         }
     }
 
     /*
      * <VarExpr> ::= <VarExprPrefix> <Identifier> <VarExprSuffix>
      * <VarExprPrefix> ::= SUPER . | THIS . | EMPTY
+     * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
      */
     private Expr parseVarExpr() {
 //        Expr left = parseVarExprPrefix();
@@ -640,15 +642,11 @@ public class Parser
     }
 
     /*
-     * <VarExprPrefix> ::= SUPER . | THIS . | EMPTY
-     * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
      * <DispatchExpr> ::= <DispatchExprPrefix> <Identifier> ( <Arguments> )
      * <DispatchExprPrefix> ::= <Primary> . | EMPTY
      */
-    private String parseVarExprPrefix() {
-        if (this.currentToken.kind == IDENTIFIER) {
-            return parseIdentifier();
-        }
+    private Expr parseDispatchExpr() {
+
         return null;
     }
 
