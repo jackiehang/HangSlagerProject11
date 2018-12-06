@@ -127,6 +127,8 @@ public class Scanner
 
             case('|'): return getBinaryLogicToken();
 
+            case('%'): return getCommentOrMulDivToken();
+
             case('{'):
                 currentChar = sourceFile.getNextChar();
                 return new Token(Token.Kind.LCURLY,
