@@ -442,14 +442,26 @@ public class Parser
      *               % <NewCastOrUnary> <MoreNCU> |
      *               EMPTY
      */
-	private Expr parseMultExpr() { }
+	private Expr parseMultExpr() {
+
+
+    }
 
     /*
 	 * <NewCastOrUnary> ::= < NewExpression> | <CastExpression> | <UnaryPrefix>
      */
 	private Expr parseNewCastOrUnary() {
 	    if (this.currentToken.kind == CAST) return parseCast();
-	    else if (this.currentToken.kind == )
+	    else if (this.currentToken.kind == NEW ) return parseNew();
+	    else if(this.currentToken.kind == UNARYDECR || this.currentToken.kind == UNARYINCR
+                || this.currentToken.kind == UNARYNOT || this.currentToken.kind == PLUSMINUS){
+	        return parseUnaryPrefix();
+        }
+        else{
+            this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CAST OR UNARY TOKEN");
+            return null;
+
+        }
     }
 
 
