@@ -612,7 +612,7 @@ public class Parser
 	 * <Primary> ::= ( <Expression> ) | <IntegerConst> | <BooleanConst> |
      *                               <StringConst> | <VarExpr> | <DispatchExpr>
      * <VarExpr> ::= <VarExprPrefix> <Identifier> <VarExprSuffix>
-     * <VarExprPrefix> ::= SUPER . | THIS . | EMPTY
+     * <VarExprPrefix> ::= <Identifier> . | EMPTY
      * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
      * <DispatchExpr> ::= <DispatchExprPrefix> <Identifier> ( <Arguments> )
      * <DispatchExprPrefix> ::= <Primary> . | EMPTY
