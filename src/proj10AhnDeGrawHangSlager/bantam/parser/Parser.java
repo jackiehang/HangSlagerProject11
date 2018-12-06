@@ -390,10 +390,19 @@ public class Parser
 	private Expr parseEqualityExpr() {
         int position = this.currentToken.position;
         Expr left = parseRelationalExpr();
+        this.currentToken = scanner.scan();
         if (this.currentToken.kind == COMPARE) {
-            this.currentToken = scanner.scan();
-            Expr right = parseRelationalExpr();
-            left = new BinaryCompEqExpr(position, left, right);
+            Expr right;
+            if(this.currentToken.spelling.equals("!=")){
+                this.currentToken = scanner.scan();
+                right = parseRelationalExpr();
+                left = new BinaryCompNeExpr(position, left, right);
+            }
+            else if(this.currentToken.spelling.equals("==")){
+                this.currentToken = scanner.scan();
+                right = parseRelationalExpr();
+                left = new BinaryCompEqExpr(position, left, right);
+            }
         }
         return left;
     }
@@ -484,7 +493,7 @@ public class Parser
 	    if (this.currentToken.kind == CAST) return parseCast();
 	    else if (this.currentToken.kind == NEW ) return parseNew();
 	    else if(this.currentToken.kind == UNARYDECR || this.currentToken.kind == UNARYINCR
-                || this.currentToken.kind == UNARYNOT || this.currentToken.kind == PLUSMINUS){
+                || this.currentToken.kind == UNARYNOT || this.currentToken.spelling.equals("-") ){
 	        return parseUnaryPrefix();
         }
         else{
@@ -559,7 +568,28 @@ public class Parser
 	 * <UnaryPrefix> ::= <PrefixOp> <UnaryPrefix> | <UnaryPostfix>
      * <PrefixOp> ::= - | ! | ++ | --
      */
-	private Expr parseUnaryPrefix() { }
+	private Expr parseUnaryPrefix() {
+	    boolean isUnaryPref = this.currentToken.kind == UNARYDECR || this.currentToken.kind == UNARYINCR
+                || this.currentToken.kind == UNARYNOT || this.currentToken.spelling.equals("-");
+
+	    while(isUnaryPref){
+            switch(currentToken.kind) {
+                case UNARYINCR:
+                    this.currentToken = scanner.scan();
+                    return new UnaryIncrExpr(this.currentToken.position, parseUnaryPrefix(), false);
+                case UNARYDECR:
+                    this.currentToken = scanner.scan();
+                    return new UnaryDecrExpr(this.currentToken.position, parseUnaryPrefix(), false);
+                case UNARYNOT:
+                    this.currentToken = scanner.scan();
+                    return new UnaryNotExpr(this.currentToken.position, parseUnaryPrefix());
+                case PLUSMINUS:
+                    this.currentToken = scanner.scan();
+                    return new UnaryNegExpr(this.currentToken.position, parseUnaryPrefix());
+            }
+        }
+        return parseUnaryPostfix();
+    }
 
 
     /*
