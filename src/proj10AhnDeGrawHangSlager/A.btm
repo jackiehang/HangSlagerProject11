@@ -1,8 +1,8 @@
 class A{
-	long s = 0; 
-	int t =1; 
+	int s = 0; 
+	int t = 1; 
 	void add(){
-		s += t;
+		boolean u = true;
 	}
 
 }

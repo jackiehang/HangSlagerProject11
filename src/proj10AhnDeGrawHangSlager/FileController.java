@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -35,9 +36,11 @@ import javafx.stage.Window;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import proj10AhnDeGrawHangSlager.bantam.ast.Program;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Scanner;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Token;
 import proj10AhnDeGrawHangSlager.bantam.parser.Parser;
+import proj10AhnDeGrawHangSlager.bantam.treedrawer.Drawer;
 import proj10AhnDeGrawHangSlager.bantam.util.CompilationException;
 import proj10AhnDeGrawHangSlager.bantam.util.Error;
 import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
@@ -372,7 +375,9 @@ public class FileController {
             }
 
             else{
-                this.parser.parse(filename);
+                Program root = this.parser.parse(filename);
+                Drawer d = new Drawer();
+                d.draw(filename, root);
             }
 
         }

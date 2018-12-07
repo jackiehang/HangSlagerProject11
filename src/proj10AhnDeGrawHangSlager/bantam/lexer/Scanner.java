@@ -86,10 +86,10 @@ public class Scanner
     public Token scan() {
         Character tempChar = currentChar;
 
-
-        if (currentChar.equals(SourceFile.eof)) return new Token(Token.Kind.EOF,
-                currentChar.toString(), this.sourceFile.getCurrentLineNumber());
-
+        if(currentChar.equals(SourceFile.eof)){
+//            System.out.println("fuck me right");
+            return new Token(Token.Kind.EOF, currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+        }
         //gets rid of whitespace
         else {
             while(currentChar.equals('\t') || currentChar.equals('\r')
@@ -102,6 +102,10 @@ public class Scanner
 
 
         switch(tempChar) {
+
+            case(SourceFile.eof):
+                return new Token(Token.Kind.EOF,
+                        currentChar.toString(), this.sourceFile.getCurrentLineNumber());
 
             case('*'):
                 currentChar = sourceFile.getNextChar();
@@ -426,16 +430,16 @@ public class Scanner
         }
 
         try {
-            if (Integer.parseInt(spelling) < Math.pow(2, 31) - 1)
+                Integer.parseInt(spelling);
                 return new Token(Token.Kind.INTCONST, spelling, this.sourceFile.getCurrentLineNumber());
         }
         catch (NumberFormatException e){
             this.errorHandler.register(Error.Kind.LEX_ERROR,
                     this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
                     "INVALID INTEGER CONSTANT");
+            return new Token(Token.Kind.ERROR, spelling,
+                    this.sourceFile.getCurrentLineNumber());
         }
-        return new Token(Token.Kind.ERROR, spelling,
-                this.sourceFile.getCurrentLineNumber());
     }
 
     /**

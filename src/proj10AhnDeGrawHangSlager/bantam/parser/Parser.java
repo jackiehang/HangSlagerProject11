@@ -80,7 +80,7 @@ public class Parser
     private Class_ parseClass() {
         if (this.currentToken.kind != CLASS) {
             this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CLASS DECLARATION");
-            return null;
+//            return null;
         }
         this.currentToken = scanner.scan();
         String left = parseIdentifier();
@@ -95,16 +95,26 @@ public class Parser
             this.currentToken = scanner.scan();
 
             MemberList memberList = new MemberList(this.currentToken.position);
-            Member member = parseMember();
+            Member member = null;
 
             Set<String> ids = Set.of("int", "int[]", "bool", "bool[]", "void");
-            while (!ids.contains(currentToken.spelling)) {
+//            while (!ids.contains(currentToken.spelling)) {
+            System.out.println("kind: " + currentToken.kind);
+            System.out.println("spelling: " + currentToken.spelling);
+            while (currentToken.kind != RCURLY) {
+//                System.out.println("kind: " + currentToken.kind);
+//                System.out.println("spelling: " + currentToken.spelling);
+                System.out.println(member);
+                member = parseMember();
                 memberList.addElement(member);
                 this.currentToken = scanner.scan();
-                member = parseMember();
-                System.out.println("spelling: " + currentToken.spelling);
+
+
             }
             System.out.println("returning class");
+            for (ASTNode m : memberList) {
+                System.out.println("MEMBER: " + m);
+            }
             return new Class_(this.currentToken.position, left.concat(".btm"), left, parent, memberList);
         }
         else {
@@ -122,33 +132,44 @@ public class Parser
      */
      private Member parseMember() {
          String type = parseType();
-         this.currentToken = scanner.scan();
-
+//         this.currentToken = scanner.scan();
+         System.out.println("CUR SPELLING0: " + currentToken.spelling);
+//         System.out.println("PARSING NAME");
          String name = parseIdentifier();
          this.currentToken = scanner.scan();
 
          if (this.currentToken.kind == LPAREN) {
 
              FormalList params = parseParameters();
-             this.currentToken = scanner.scan();
-
+//             this.currentToken = scanner.scan();
+             System.out.println("SPELLINGGGGGGG: " + currentToken.spelling);
              if (this.currentToken.kind == RPAREN) {
                  this.currentToken = scanner.scan();
                  BlockStmt block = (BlockStmt)parseBlock();
+//                 System.out.println("type: " + type);
+//                 System.out.println("name: " + name);
+//                 System.out.println("params: " + params);
+//                 System.out.println("stmtList: " + block.getStmtList());
+                 System.out.println("CUR SPELLING1: " + currentToken.spelling);
                  return new Method(this.currentToken.position, type, name, params, block.getStmtList());
              }
-             else {
+//             else {
                  this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID MEMBER DECLARATION");
-                 return null;
-             }
+//                 return null;
+//             }
          }
          else {
              Expr init = null;
              if (this.currentToken.kind == ASSIGN) {
-                this.currentToken = scanner.scan();
+//                this.currentToken = scanner.scan();
                 init = parseExpression();
 //                return new Field(this.currentToken.position, type, name, init);
              }
+             System.out.println("type: " + type);
+             System.out.println("name: " + name);
+             System.out.println("init: " + init);
+             System.out.println("CUR SPELLING2: " + currentToken.spelling);
+             this.currentToken = scanner.scan();
              return new Field(this.currentToken.position, type, name, init);
 
 
@@ -159,6 +180,7 @@ public class Parser
 //                 return null;
 //             }
          }
+         return null;
      }
 
 
@@ -360,14 +382,17 @@ public class Parser
 
     /*
 	 * <Expression> ::= <LogicalOrExpr> <OptionalAssignment>
-     * <OptionalAssignment> ::= EMPTY | = <Expression>
+     * <OptionalAssignment> ::= EMPTY | = <Expression>f
      */
 	private Expr parseExpression() {
+	    System.out.println("parseExpre()");
         Expr right = null;
         String name = "";
 	    Expr left = parseOrExpr();
         name = this.currentToken.spelling;
+        System.out.println("spelling: " + this.currentToken.spelling);
         while (this.currentToken.kind == ASSIGN){
+
             System.out.println("im a freak0");
 	        this.currentToken = scanner.scan();
 	        right = parseExpression();
@@ -425,7 +450,6 @@ public class Parser
 	private Expr parseEqualityExpr() {
         int position = this.currentToken.position;
         Expr left = parseRelationalExpr();
-        this.currentToken = scanner.scan();
         if (this.currentToken.kind == COMPARE) {
             Expr right;
             if(this.currentToken.spelling.equals("!=")){
@@ -480,11 +504,15 @@ public class Parser
 
         Expr left = parseMultExpr();
         Expr right = null;
+        System.out.println("KINDDDDD: " + currentToken.kind);
+        System.out.println("spelling: " + currentToken.spelling);
         while (this.currentToken.kind == PLUSMINUS) {
             System.out.println("im a freak 3");
             this.currentToken = scanner.scan();
             right = parseAddExpr();
         }
+        System.out.println("\nLEFT: " + left);
+        System.out.println("RIGHT: " + right);
         return new BinaryArithPlusExpr(this.currentToken.position, left, right);
     }
 
@@ -496,8 +524,10 @@ public class Parser
      *               EMPTY
      */
 	private Expr parseMultExpr() {
+
 	    Expr left = parseNewCastOrUnary();
-	    this.currentToken = scanner.scan();
+
+        System.out.println("BISH "+ this.currentToken.kind);
 	    while (this.currentToken.kind == MULDIV) {
             System.out.println("im a freak 4");
 	        switch(this.currentToken.getSpelling()) {
@@ -510,6 +540,8 @@ public class Parser
                 case "%":
                     this.currentToken = scanner.scan();
                     return new BinaryArithDivideExpr(this.currentToken.position, left, parseMultExpr());
+//                case "NEW":
+//
                 default:
                     this.errorHandler.register(Error.Kind.LEX_ERROR,
                             "MULDIV TOKEN IS : " + this.currentToken.getSpelling());
@@ -532,6 +564,7 @@ public class Parser
         }
         else{
             this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CAST OR UNARY TOKEN");
+            System.out.println("DIS WHY U NULL DUMBASS");
             return null;
 
         }
@@ -756,7 +789,7 @@ public class Parser
 	    Formal left = parseFormal();
 	    formalList.addElement(left);
 
-        this.currentToken = scanner.scan();
+//        this.currentToken = scanner.scan();
 	    while (this.currentToken.kind == COMMA) {
             System.out.println("im a freak 7");
             formalList.addElement(parseFormal());
@@ -771,7 +804,7 @@ public class Parser
      */
 	private Formal parseFormal() {
 	    String type = parseType();
-	    this.currentToken = scanner.scan();
+//	    this.currentToken = scanner.scan();
         String identifier = parseIdentifier();
         return new Formal(this.currentToken.position, type, identifier);
     }
@@ -816,6 +849,9 @@ public class Parser
 
 
     private String parseIdentifier() {
+	    System.out.println("PARSING ID");
+	    System.out.println("spelling: " + currentToken.spelling);
+        System.out.println("kind: " + currentToken.kind + "\n");
         if (this.currentToken.kind == IDENTIFIER) {
             return this.currentToken.getSpelling();
         }
