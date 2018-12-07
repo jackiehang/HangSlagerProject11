@@ -644,8 +644,34 @@ public class Parser
      * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
      */
     private Expr parseVarExpr() {
+        String id;
+        Expr varExprSuffix;
 
-        return null;
+        if(this.currentToken.spelling.equals("super") || this.currentToken.spelling.equals("this")){
+            id = currentToken.spelling;
+        }
+        else{
+            id = parseIdentifier();
+        }
+
+
+        this.currentToken = scanner.scan();
+        if(this.currentToken.kind == LBRACKET){
+            this.currentToken = scanner.scan();
+            varExprSuffix = parseExpression();
+            return new ArrayExpr(this.currentToken.position, null, id, varExprSuffix);
+
+        }
+        else if(this.currentToken.kind == IDENTIFIER){
+            String identifier = currentToken.spelling;
+            VarExpr idVar = new VarExpr(this.currentToken.position, null, identifier);
+            return new VarExpr(this.currentToken.position, idVar, id);
+        }
+        else{
+            this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID VAR EXPRESSION");
+            return null;
+        }
+
 
     }
 
