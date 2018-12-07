@@ -50,7 +50,6 @@ public class Parser
     public Program parse(String filename) {
         this.scanner = new Scanner(filename, this.errorHandler);
         this.currentToken = scanner.scan();
-        System.out.println("KINDDDDDD: " + currentToken.kind);
         return parseProgram();
     }
 
@@ -62,14 +61,9 @@ public class Parser
 
         int position = currentToken.position;
         ClassList classList = new ClassList(position);
-        System.out.println("KIND1: " + currentToken.kind);
         while (currentToken.kind != EOF) {
-            System.out.println("KIND2: " + currentToken.kind);
             Class_ aClass = parseClass();
-//            System.out.println("adding class");
-//            System.out.println("ADDING TO classList");
             classList.addElement(aClass);
-//            currentToken = scanner.scan();
         }
 
         return new Program(position, classList);
@@ -82,8 +76,6 @@ public class Parser
      * <MemberList> ::= EMPTY | <Member> <MemberList>
      */
     private Class_ parseClass() {
-//        System.out.println("KIND: " + currentToken.kind);
-//        System.out.println("KIND2: " + currentToken.kind);
 
         if (this.currentToken.kind != CLASS) {
             this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CLASS DECLARATION");
@@ -97,14 +89,12 @@ public class Parser
             this.currentToken = scanner.scan();
             parent = parseIdentifier();
         }
-//        this.currentToken = scanner.scan();
         if (this.currentToken.kind == LCURLY) {
             this.currentToken = scanner.scan();
 
             MemberList memberList = new MemberList(this.currentToken.position);
             Member member = null;
 
-            Set<String> ids = Set.of("int", "int[]", "bool", "bool[]", "void");
 
             while (currentToken.kind != RCURLY) {
                 member = parseMember();
@@ -115,7 +105,6 @@ public class Parser
         }
         else {
             this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CLASS DECLARATION");
-//            System.out.println("ERROR1");
             return null;
         }
     }
@@ -315,7 +304,6 @@ public class Parser
         StmtList listOfNodes = new StmtList(this.currentToken.position);
         while(this.currentToken.kind != RCURLY){
             currentToken = scanner.scan();
-            System.out.println("ADDING TO listOfNodes");
             listOfNodes.addElement(parseStatement());
         }
         return new BlockStmt(this.currentToken.position, listOfNodes);
@@ -717,12 +705,10 @@ public class Parser
 	private ExprList parseArguments() {
 	    ExprList eList = new ExprList(this.currentToken.position);
 	    Expr expr = parseExpression();
-	    System.out.println("ADDING TO eList");
 	    eList.addElement(expr);
         this.currentToken = scanner.scan();
 	    while(this.currentToken.kind == COMMA){
 	        this.currentToken = scanner.scan();
-            System.out.println("ADDING TO eList");
 	        eList.addElement(parseExpression());
         }
 	    return new ExprList(this.currentToken.position);
@@ -737,7 +723,6 @@ public class Parser
 
 	    FormalList formalList = new FormalList(this.currentToken.position);
 	    Formal left = parseFormal();
-        System.out.println("ADDING TO formalList");
 	    formalList.addElement(left);
 	    while (this.currentToken.kind == COMMA) {
             formalList.addElement(parseFormal());
@@ -797,10 +782,8 @@ public class Parser
 
     private String parseIdentifier() {
         if (this.currentToken.kind == IDENTIFIER) {
-            System.out.println("RETURNING SPELLING: " + this.currentToken.getSpelling());
             return this.currentToken.getSpelling();
         }
-        System.out.println("RETURNING NULL");
         return null;
     }
 
@@ -835,7 +818,6 @@ public class Parser
                 Parser parser = new Parser(errorHandler);
                 parser.parse(args[i]);
 
-                System.out.println("File parsed: " + args[i] );
 
                 if(errorHandler.getErrorList().size() > 0){
                     System.out.println("Scanning of " + args[i] + " was not successful. "+
