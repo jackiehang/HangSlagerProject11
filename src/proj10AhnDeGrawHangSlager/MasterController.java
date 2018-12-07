@@ -131,6 +131,14 @@ public class MasterController {
     }
 
 
+    private void errorHelper(List<Error> scanningErrors){
+        for (Error e : scanningErrors)
+            this.console.writeLine(e.toString() + "\n", "ERROR");
+
+        this.console.writeLine(scanningErrors.size() +
+                " illegal tokens were found.", "ERROR");
+
+    }
     /**
      * Scans the file of the current tab for tokens
      * @param event
@@ -151,13 +159,19 @@ public class MasterController {
 
         if (scanningErrors != null) {
 
-            for (Error e : scanningErrors)
-                this.console.writeLine(e.toString() + "\n", "ERROR");
+            errorHelper(scanningErrors);
+        }
+        else{
+            this.console.writeLine("Scan of file was successful.", "CONS");
 
-            this.console.writeLine(scanningErrors.size() +
-                    " illegal tokens were found.", "ERROR");
         }
     }
+
+    /**
+     * Scans and parses the file of the current tab
+     * @param event
+     * @throws InterruptedException
+     */
 
     @FXML public void handleScanAndParse(Event event) throws InterruptedException {
 
@@ -173,11 +187,11 @@ public class MasterController {
 
         if (scanningAndParsingErrors != null) {
 
-            for (Error e : scanningAndParsingErrors)
-                this.console.writeLine(e.toString() + "\n", "ERROR");
+            errorHelper(scanningAndParsingErrors);
+        }
+        else{
+            this.console.writeLine("Scan and parse of file was successful.", "CONS");
 
-            this.console.writeLine(scanningAndParsingErrors.size() +
-                    " illegal tokens were found.", "ERROR");
         }
     }
 

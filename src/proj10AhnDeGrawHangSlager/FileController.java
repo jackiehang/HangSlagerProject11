@@ -337,6 +337,14 @@ public class FileController {
         scanOrParseHelper(event, "SCAN_ONLY" );
 
     }
+
+    /**
+     * this method is called when the Scan&Parse button is pressed
+     * if the file is not saved it prompts the user to save before scanning
+     * it will scan and parse the file and display an AST if parse
+     * was successful
+     * @param event press of the Scan button triggering the handleScan method
+     */
     public void handleScanAndParse (Event event) {
 
         scanOrParseHelper(event, "SCAN_AND_PARSE" );
@@ -344,6 +352,12 @@ public class FileController {
 
     }
 
+    /**
+     * Assists with calling just scan or scanning and parsing the
+     * file
+     * @param event press of the Scan button triggering the handleScan and Parse method
+     * @param scanOrParse string "SCAN_ONLY" or "SCAN_AND_PARSE"
+     */
     public void scanOrParseHelper(Event event, String scanOrParse ){
         JavaTab curTab = (JavaTab)this.javaTabPane.getSelectionModel().getSelectedItem();
 
@@ -397,8 +411,6 @@ public class FileController {
         }
 
     }
-
-
 
 
     /**

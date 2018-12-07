@@ -15,6 +15,7 @@ import org.reactfx.value.Var;
 import proj10AhnDeGrawHangSlager.bantam.ast.*;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Scanner;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Token;
+import proj10AhnDeGrawHangSlager.bantam.util.CompilationException;
 import proj10AhnDeGrawHangSlager.bantam.util.Error;
 import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
 import proj10AhnDeGrawHangSlager.bantam.visitor.Visitor;
@@ -878,4 +879,33 @@ public class Parser
         return null;
     }
 
+    public static void main(String[] args){
+        if(args.length > 0){
+            for(int i = 0; i< args.length; i ++){
+                ErrorHandler errorHandler = new ErrorHandler();
+                Parser parser = new Parser(errorHandler);
+                parser.parse(args[i]);
+
+                System.out.println("File parsed: " + args[i] );
+
+                if(errorHandler.getErrorList().size() > 0){
+                    System.out.println("Scanning of " + args[i] + " was not successful. "+
+                            errorHandler.getErrorList().size() +" errors were found.\n\n");
+                }
+                else{
+
+                    System.out.println("Scanning of " + args[i] + " was successful. " +
+                            "No errors were found.\n\n");
+                }
+
+
+            }
+        }
+
+    }
+
 }
+
+
+
+

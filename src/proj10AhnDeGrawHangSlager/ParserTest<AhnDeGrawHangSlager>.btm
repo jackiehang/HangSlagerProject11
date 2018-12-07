@@ -62,6 +62,24 @@ class ParserTest{
         return w;
     }
 
+    int modulus(){
+        int a = 24 % 3;
+        return a;
+    }
 
+    boolean lessThan(){
+        return x < y;
+    }
 
+    boolean greaterThan(){
+        return x > y;
+    }
+
+    boolean lessThanEq(){
+        return x <= y;
+    }
+
+    boolean greaterThanEq(){
+        return x >= y;
+    }
 }
