@@ -470,21 +470,6 @@ public class Scanner
         }
 
 
-//        while(Character.isLetterOrDigit(currentChar) || currentChar.equals('_')) {
-//            spelling = spelling.concat(currentChar.toString());
-//            currentChar = this.sourceFile.getNextChar();
-//        }
-//        if (charsEndingIdentifierOrKeyword.contains(currentChar)) {
-//            this.goToNextChar = true;
-//
-//            spelling= spelling.concat(currentChar.toString());
-//            return new Token(Token.Kind.ERROR, spelling,
-//                    this.sourceFile.getCurrentLineNumber());
-//        }
-//        this.errorHandler.register(Error.Kind.LEX_ERROR,
-//                this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
-//                "UNSUPPORTED IDENTIFIER CHARACTER");
-
         return new Token(Token.Kind.IDENTIFIER, spelling, this.sourceFile.getCurrentLineNumber());
     }
 
