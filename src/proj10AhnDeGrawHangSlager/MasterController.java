@@ -62,6 +62,7 @@ public class MasterController {
     @FXML private TextField replaceTextEntry;
     @FXML private Menu prefMenu;
     @FXML private Button scanButton;
+    @FXML private Button scanAndParseButton;
 
     private EditController editController;
     private FileController fileController;
@@ -75,8 +76,6 @@ public class MasterController {
 
         editController = new EditController(javaTabPane, findTextEntry, findPrevBtn, findNextBtn, replaceTextEntry);
         this.fileController = new FileController(vBox,javaTabPane);
-        System.out.println("FC0: " + fileController);
-
 
         SimpleListProperty<Tab> listProperty = new SimpleListProperty<Tab> (javaTabPane.getTabs());
         editMenu.disableProperty().bind(listProperty.emptyProperty());
@@ -84,30 +83,15 @@ public class MasterController {
         saveAsMenuItem.disableProperty().bind(listProperty.emptyProperty());
         closeMenuItem.disableProperty().bind(listProperty.emptyProperty());
         scanButton.disableProperty().bind(listProperty.emptyProperty());
-        System.out.println("THIS0: " + this);
+        scanAndParseButton.disableProperty().bind(listProperty.emptyProperty());
+
 
         // this line from JianQuanMarcello project 6
         this.setupContextMenuController();
 
     }
 
-//    public MasterController() {
-//        editController = new EditController(javaTabPane, findTextEntry, findPrevBtn, findNextBtn, replaceTextEntry);
-//        this.fileController = new FileController(vBox,javaTabPane);
-//        System.out.println("FC0: " + fileController);
-//
-//
-//        SimpleListProperty<Tab> listProperty = new SimpleListProperty<Tab> (javaTabPane.getTabs());
-//        editMenu.disableProperty().bind(listProperty.emptyProperty());
-//        saveMenuItem.disableProperty().bind(listProperty.emptyProperty());
-//        saveAsMenuItem.disableProperty().bind(listProperty.emptyProperty());
-//        closeMenuItem.disableProperty().bind(listProperty.emptyProperty());
-//        scanButton.disableProperty().bind(listProperty.emptyProperty());
-//        System.out.println("THIS0: " + this);
-//
-//        // this line from JianQuanMarcello project 6
-//        this.setupContextMenuController();
-//    }
+
 
 
     /**
@@ -159,6 +143,7 @@ public class MasterController {
             this.fileController.handleScan(event);
         } catch (CompilationException e) {
             this.console.writeLine(e.toString() + "\n", "ERROR");
+
             return;
         }
 
