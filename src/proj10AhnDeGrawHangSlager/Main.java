@@ -40,35 +40,17 @@ public class Main extends Application{
      */
     @Override
     public void start(Stage stage) throws Exception{
-        FXMLLoader loader = new FXMLLoader();
 
-        Parent root = loader.load(getClass().getResource("resources/Main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("resources/Main.fxml"));
+        Parent root = loader.load();
 
-        MasterController mc = (MasterController)loader.getController();
-        System.out.println(("MC: " + mc));
-
-//        FXMLLoader loader = new FXMLLoader();
-////        MasterController masterController = new MasterController();
-////        masterController.initialize();
-////        loader.setController(masterController);
-////        stage.setOnCloseRequest((event) -> masterController.handleExit(event));
-//        Parent root = loader.load(getClass().getResource("resources/Main.fxml"));
-
-
-//        MasterController mc = loader.getController();
-
-
-//        Scene scene = new Scene(root, 1000, 600);
-//        stage.setTitle("Project 09");
-//        stage.setScene(scene);
-//        stage.show();
-
+        MasterController mc = loader.getController();
+        stage.setOnCloseRequest((e) -> mc.handleExit(e));
 
         Scene scene = new Scene(root, 1000, 600);
         stage.setTitle("Project 09");
         stage.setScene(scene);
         stage.show();
-        stage.setOnCloseRequest((e) -> mc.handleExit(e));
     }
     /**
      * Launches an instance of class Main
