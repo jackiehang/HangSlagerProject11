@@ -62,8 +62,6 @@ public class Parser
         ClassList classList = new ClassList(position);
 
         while (currentToken.kind != EOF) {
-            //System.out.println(currentToken.kind);
-            //System.out.println(currentToken.spelling);
             Class_ aClass = parseClass();
             classList.addElement(aClass);
         }
@@ -698,8 +696,6 @@ public class Parser
             this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID VAR EXPRESSION");
             return null;
         }
-
-
     }
 
     /*
