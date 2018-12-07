@@ -250,7 +250,6 @@ public class Parser
         this.currentToken = scanner.scan();
         Expr right = null;
         while (this.currentToken.kind != SEMICOLON) {
-            System.out.println("im a freak 10");
             right = parseExpression();
             this.currentToken = scanner.scan();
         }
@@ -288,12 +287,10 @@ public class Parser
         Expr init = null;
 	    if (this.currentToken.kind == VAR){
 	        while (this.currentToken.kind != COMPARE){
-                System.out.println("im a freak 11");
                 name = parseIdentifier();
                 this.currentToken = scanner.scan();
             }
 	        while (this.currentToken.kind != SEMICOLON) {
-                System.out.println("im a freak 12");
                 init = parseExpression();
                 this.currentToken = scanner.scan();
             }
@@ -315,25 +312,21 @@ public class Parser
         Expr updateExpr = null;
 
         while (!this.currentToken.getSpelling().equals(";")){
-            System.out.println("im a freak 14");
             this.currentToken = scanner.scan();
             initExpr = parseExpression();
         }
 
         while (!this.currentToken.getSpelling().equals(";")){
-            System.out.println("im a freak 15");
             this.currentToken = scanner.scan();
             predExpr = parseExpression();
         }
 
         while (this.currentToken.kind != RPAREN){
-            System.out.println("im a freak 16");
             this.currentToken = scanner.scan();
             updateExpr = parseExpression();
         }
 
         while(this.currentToken.kind != RBRACKET){
-            System.out.println("im a freak 17");
             this.currentToken = scanner.scan();
             stmt = parseStatement();
         }
@@ -349,7 +342,6 @@ public class Parser
 	private Stmt parseBlock() {
         StmtList listOfNodes = new StmtList(this.currentToken.position);
         while(this.currentToken.kind != RCURLY){
-            System.out.println("im a freak 18");
             currentToken = scanner.scan();
             System.out.println("ADDING TO listOfNodes");
             listOfNodes.addElement(parseStatement());
@@ -388,15 +380,11 @@ public class Parser
      * <OptionalAssignment> ::= EMPTY | = <Expression>f
      */
 	private Expr parseExpression() {
-	    System.out.println("parseExpre()");
         Expr right = null;
         String name = "";
 	    Expr left = parseOrExpr();
         name = this.currentToken.spelling;
-        System.out.println("spelling: " + this.currentToken.spelling);
         while (this.currentToken.kind == ASSIGN){
-
-            System.out.println("im a freak0");
 	        this.currentToken = scanner.scan();
 	        right = parseExpression();
         }
@@ -417,7 +405,6 @@ public class Parser
 
         Expr left = parseAndExpr();
         while (this.currentToken.kind == BINARYLOGIC) {
-            System.out.println("im a freak 1");
             this.currentToken = scanner.scan();
             Expr right = parseAndExpr();
             left = new BinaryLogicOrExpr(position, left, right);
@@ -435,7 +422,6 @@ public class Parser
 
         Expr left = parseEqualityExpr();
         while (this.currentToken.kind == BINARYLOGIC) {
-            System.out.println("im a freak 2");
             this.currentToken = scanner.scan();
             Expr right = parseEqualityExpr();
             left = new BinaryLogicAndExpr(position, left, right);
@@ -507,15 +493,10 @@ public class Parser
 
         Expr left = parseMultExpr();
         Expr right = null;
-        System.out.println("KINDDDDD: " + currentToken.kind);
-        System.out.println("spelling: " + currentToken.spelling);
         while (this.currentToken.kind == PLUSMINUS) {
-            System.out.println("im a freak 3");
             this.currentToken = scanner.scan();
             right = parseAddExpr();
         }
-        System.out.println("\nLEFT: " + left);
-        System.out.println("RIGHT: " + right);
         return new BinaryArithPlusExpr(this.currentToken.position, left, right);
     }
 
@@ -529,10 +510,7 @@ public class Parser
 	private Expr parseMultExpr() {
 
 	    Expr left = parseNewCastOrUnary();
-
-        System.out.println("BISH "+ this.currentToken.kind);
 	    while (this.currentToken.kind == MULDIV) {
-            System.out.println("im a freak 4");
 	        switch(this.currentToken.getSpelling()) {
                 case "*":
                     this.currentToken = scanner.scan();
@@ -567,7 +545,6 @@ public class Parser
         }
         else{
             this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CAST OR UNARY TOKEN");
-            System.out.println("DIS WHY U NULL DUMBASS");
             return null;
 
         }
@@ -643,7 +620,6 @@ public class Parser
                 || this.currentToken.kind == UNARYNOT || this.currentToken.spelling.equals("-");
 
 	    while(isUnaryPref){
-            System.out.println("im a freak 5");
             switch(currentToken.kind) {
                 case UNARYINCR:
                     this.currentToken = scanner.scan();
@@ -773,7 +749,6 @@ public class Parser
 	    eList.addElement(expr);
         this.currentToken = scanner.scan();
 	    while(this.currentToken.kind == COMMA){
-            System.out.println("im a freak 6");
 	        this.currentToken = scanner.scan();
             System.out.println("ADDING TO eList");
 	        eList.addElement(parseExpression());
@@ -792,8 +767,6 @@ public class Parser
 	    Formal left = parseFormal();
         System.out.println("ADDING TO formalList");
 	    formalList.addElement(left);
-
-//        this.currentToken = scanner.scan();
 	    while (this.currentToken.kind == COMMA) {
             formalList.addElement(parseFormal());
             this.currentToken = scanner.scan();
@@ -807,7 +780,6 @@ public class Parser
      */
 	private Formal parseFormal() {
 	    String type = parseType();
-//	    this.currentToken = scanner.scan();
         String identifier = parseIdentifier();
         return new Formal(this.currentToken.position, type, identifier);
     }
@@ -852,9 +824,6 @@ public class Parser
 
 
     private String parseIdentifier() {
-	    System.out.println("PARSING ID");
-	    System.out.println("spelling: " + currentToken.spelling);
-        System.out.println("kind: " + currentToken.kind + "\n");
         if (this.currentToken.kind == IDENTIFIER) {
             System.out.println("RETURNING SPELLING: " + this.currentToken.getSpelling());
             return this.currentToken.getSpelling();
