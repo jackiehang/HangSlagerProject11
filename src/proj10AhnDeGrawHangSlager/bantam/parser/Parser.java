@@ -79,7 +79,6 @@ public class Parser
     private Class_ parseClass() {
         if (this.currentToken.kind != CLASS) {
             this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID CLASS DECLARATION");
-//            return null;
         }
         this.currentToken = scanner.scan();
         String left = parseIdentifier();
@@ -97,22 +96,11 @@ public class Parser
             Member member = null;
 
             Set<String> ids = Set.of("int", "int[]", "bool", "bool[]", "void");
-//            while (!ids.contains(currentToken.spelling)) {
-            System.out.println("kind: " + currentToken.kind);
-            System.out.println("spelling: " + currentToken.spelling);
+
             while (currentToken.kind != RCURLY) {
-//                System.out.println("kind: " + currentToken.kind);
-//                System.out.println("spelling: " + currentToken.spelling);
-                System.out.println(member);
                 member = parseMember();
                 memberList.addElement(member);
                 this.currentToken = scanner.scan();
-
-
-            }
-            System.out.println("returning class");
-            for (ASTNode m : memberList) {
-                System.out.println("MEMBER: " + m);
             }
             return new Class_(this.currentToken.position, left.concat(".btm"), left, parent, memberList);
         }
@@ -131,53 +119,30 @@ public class Parser
      */
      private Member parseMember() {
          String type = parseType();
-//         this.currentToken = scanner.scan();
-         System.out.println("CUR SPELLING0: " + currentToken.spelling);
-//         System.out.println("PARSING NAME");
          String name = parseIdentifier();
          this.currentToken = scanner.scan();
 
          if (this.currentToken.kind == LPAREN) {
 
              FormalList params = parseParameters();
-//             this.currentToken = scanner.scan();
-             System.out.println("SPELLINGGGGGGG: " + currentToken.spelling);
+
              if (this.currentToken.kind == RPAREN) {
                  this.currentToken = scanner.scan();
                  BlockStmt block = (BlockStmt)parseBlock();
-//                 System.out.println("type: " + type);
-//                 System.out.println("name: " + name);
-//                 System.out.println("params: " + params);
-//                 System.out.println("stmtList: " + block.getStmtList());
-                 System.out.println("CUR SPELLING1: " + currentToken.spelling);
                  return new Method(this.currentToken.position, type, name, params, block.getStmtList());
              }
-//             else {
-                 this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID MEMBER DECLARATION");
-//                 return null;
-//             }
+               this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID MEMBER DECLARATION");
+
          }
          else {
              Expr init = null;
              if (this.currentToken.kind == ASSIGN) {
-//                this.currentToken = scanner.scan();
                 init = parseExpression();
-//                return new Field(this.currentToken.position, type, name, init);
              }
-             System.out.println("type: " + type);
-             System.out.println("name: " + name);
-             System.out.println("init: " + init);
-             System.out.println("CUR SPELLING2: " + currentToken.spelling);
+
              this.currentToken = scanner.scan();
              return new Field(this.currentToken.position, type, name, init);
 
-
-//             if(type != null) {
-//                 return new Field(this.currentToken.position, type, name, init);
-//             }
-//             else{
-//                 return null;
-//             }
          }
          return null;
      }
