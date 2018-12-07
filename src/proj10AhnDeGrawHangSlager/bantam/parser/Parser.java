@@ -640,7 +640,7 @@ public class Parser
 
     /*
      * <VarExpr> ::= <VarExprPrefix> <Identifier> <VarExprSuffix>
-     * <VarExprPrefix> ::= SUPER . | THIS . | EMPTY
+     * <VarExprPrefix> ::=  <Identifier> . | EMPTY
      * <VarExprSuffix> ::= [ <Expr> ] | EMPTY
      */
     private Expr parseVarExpr() {

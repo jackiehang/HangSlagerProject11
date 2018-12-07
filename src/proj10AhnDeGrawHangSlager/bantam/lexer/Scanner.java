@@ -38,7 +38,7 @@ public class Scanner
     private final Set<Character> charsEndingIdentifierOrKeyword =
             Set.of('"', '/', '+', '-', '>', '<', '=', '&', '{',
                     '}', '[', ']', '(', ')', ';', ':', '!', ' ',
-                    '.', ',', '\r', '\n', '*');
+                    '.', ',', '\r', '\n', '*', '%');
 
 
     /**
@@ -186,6 +186,9 @@ public class Scanner
                 else if (Character.isLetter(currentChar)) return getIdentifierOrKeywordToken();
                 else {
                     currentChar = sourceFile.getNextChar();
+                    this.errorHandler.register(Error.Kind.LEX_ERROR,
+                            this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
+                            "TOKEN ERROR");
                     return new Token(Token.Kind.ERROR, tempChar.toString(),
                             this.sourceFile.getCurrentLineNumber());
                 }
@@ -271,7 +274,6 @@ public class Scanner
             currentChar = this.sourceFile.getNextChar();
         }
         currentChar = sourceFile.getNextChar();
-
         return new Token(Token.Kind.COMMENT, commentBody.concat(prevChar.toString()),
                 this.sourceFile.getCurrentLineNumber());
     }
@@ -296,7 +298,9 @@ public class Scanner
                     this.sourceFile.getCurrentLineNumber());
         }
         else {
-
+            this.errorHandler.register(Error.Kind.LEX_ERROR,
+                    this.sourceFile.getFilename(), this.sourceFile.getCurrentLineNumber(),
+                    "BINARY LOGIC ERROR");
             return new Token(Token.Kind.ERROR, prevChar.toString(),
                     this.sourceFile.getCurrentLineNumber());
         }
