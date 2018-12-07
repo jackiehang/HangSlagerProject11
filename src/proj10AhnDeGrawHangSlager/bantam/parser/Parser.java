@@ -19,6 +19,8 @@ import proj10AhnDeGrawHangSlager.bantam.util.Error;
 import proj10AhnDeGrawHangSlager.bantam.util.ErrorHandler;
 import proj10AhnDeGrawHangSlager.bantam.visitor.Visitor;
 
+import java.util.Set;
+
 import static proj10AhnDeGrawHangSlager.bantam.lexer.Token.Kind;
 import static proj10AhnDeGrawHangSlager.bantam.lexer.Token.Kind.*;
 
@@ -60,6 +62,8 @@ public class Parser
         ClassList classList = new ClassList(position);
 
         while (currentToken.kind != EOF) {
+            //System.out.println(currentToken.kind);
+            //System.out.println(currentToken.spelling);
             Class_ aClass = parseClass();
             classList.addElement(aClass);
         }
@@ -87,17 +91,20 @@ public class Parser
             this.currentToken = scanner.scan();
             parent = parseIdentifier();
         }
-        this.currentToken = scanner.scan();
         if (this.currentToken.kind == LCURLY) {
             this.currentToken = scanner.scan();
 
             MemberList memberList = new MemberList(this.currentToken.position);
             Member member = parseMember();
-            while (member != null) {
+
+            Set<String> ids = Set.of("int", "int[]", "bool", "bool[]", "void");
+            while (!ids.contains(currentToken.spelling)) {
                 memberList.addElement(member);
                 this.currentToken = scanner.scan();
                 member = parseMember();
+                System.out.println("spelling: " + currentToken.spelling);
             }
+            System.out.println("returning class");
             return new Class_(this.currentToken.position, left.concat(".btm"), left, parent, memberList);
         }
         else {
@@ -126,6 +133,7 @@ public class Parser
              this.currentToken = scanner.scan();
 
              if (this.currentToken.kind == RPAREN) {
+                 this.currentToken = scanner.scan();
                  BlockStmt block = (BlockStmt)parseBlock();
                  return new Method(this.currentToken.position, type, name, params, block.getStmtList());
              }
@@ -139,8 +147,17 @@ public class Parser
              if (this.currentToken.kind == ASSIGN) {
                 this.currentToken = scanner.scan();
                 init = parseExpression();
+//                return new Field(this.currentToken.position, type, name, init);
              }
              return new Field(this.currentToken.position, type, name, init);
+
+
+//             if(type != null) {
+//                 return new Field(this.currentToken.position, type, name, init);
+//             }
+//             else{
+//                 return null;
+//             }
          }
      }
 
@@ -209,6 +226,7 @@ public class Parser
         this.currentToken = scanner.scan();
         Expr right = null;
         while (this.currentToken.kind != SEMICOLON) {
+            System.out.println("im a freak 10");
             right = parseExpression();
             this.currentToken = scanner.scan();
         }
@@ -237,7 +255,6 @@ public class Parser
         return new ExprStmt(this.currentToken.position, expr);
     }
 
-
     /*
 	 * <DeclStmt> ::= VAR <Identifier> = <Expression> ;
      * every local variable must be initialized
@@ -247,10 +264,12 @@ public class Parser
         Expr init = null;
 	    if (this.currentToken.kind == VAR){
 	        while (this.currentToken.kind != COMPARE){
+                System.out.println("im a freak 11");
                 name = parseIdentifier();
                 this.currentToken = scanner.scan();
             }
 	        while (this.currentToken.kind != SEMICOLON) {
+                System.out.println("im a freak 12");
                 init = parseExpression();
                 this.currentToken = scanner.scan();
             }
@@ -272,21 +291,25 @@ public class Parser
         Expr updateExpr = null;
 
         while (!this.currentToken.getSpelling().equals(";")){
+            System.out.println("im a freak 14");
             this.currentToken = scanner.scan();
             initExpr = parseExpression();
         }
 
         while (!this.currentToken.getSpelling().equals(";")){
+            System.out.println("im a freak 15");
             this.currentToken = scanner.scan();
             predExpr = parseExpression();
         }
 
         while (this.currentToken.kind != RPAREN){
+            System.out.println("im a freak 16");
             this.currentToken = scanner.scan();
             updateExpr = parseExpression();
         }
 
         while(this.currentToken.kind != RBRACKET){
+            System.out.println("im a freak 17");
             this.currentToken = scanner.scan();
             stmt = parseStatement();
         }
@@ -301,7 +324,8 @@ public class Parser
      */
 	private Stmt parseBlock() {
         StmtList listOfNodes = new StmtList(this.currentToken.position);
-        while(this.currentToken.kind != RBRACKET){
+        while(this.currentToken.kind != RCURLY){
+            System.out.println("im a freak 18");
             currentToken = scanner.scan();
             listOfNodes.addElement(parseStatement());
         }
@@ -340,14 +364,17 @@ public class Parser
      */
 	private Expr parseExpression() {
         Expr right = null;
-	    VarExpr left = (VarExpr)parseOrExpr();
-	    while (this.currentToken.kind == ASSIGN){
+        String name = "";
+	    Expr left = parseOrExpr();
+        name = this.currentToken.spelling;
+        while (this.currentToken.kind == ASSIGN){
+            System.out.println("im a freak0");
 	        this.currentToken = scanner.scan();
 	        right = parseExpression();
         }
 
         if(right!=null){
-            return new AssignExpr(this.currentToken.position,left.getRef().getExprType(), left.getName(), right  );
+            return new AssignExpr(this.currentToken.position,left.getExprType(), name, right  );
         }
         return left;
     } //-----------------------------------------------------------------
@@ -362,6 +389,7 @@ public class Parser
 
         Expr left = parseAndExpr();
         while (this.currentToken.kind == BINARYLOGIC) {
+            System.out.println("im a freak 1");
             this.currentToken = scanner.scan();
             Expr right = parseAndExpr();
             left = new BinaryLogicOrExpr(position, left, right);
@@ -369,7 +397,6 @@ public class Parser
 
         return left;
 	}
-
 
     /*
 	 * <LogicalAND> ::= <ComparisonExpr> <LogicalANDRest>
@@ -380,6 +407,7 @@ public class Parser
 
         Expr left = parseEqualityExpr();
         while (this.currentToken.kind == BINARYLOGIC) {
+            System.out.println("im a freak 2");
             this.currentToken = scanner.scan();
             Expr right = parseEqualityExpr();
             left = new BinaryLogicAndExpr(position, left, right);
@@ -388,7 +416,6 @@ public class Parser
         return left;
 
     }
-
 
     /*
 	 * <ComparisonExpr> ::= <RelationalExpr> <equalOrNotEqual> <RelationalExpr> |
@@ -414,7 +441,6 @@ public class Parser
         }
         return left;
     }
-
 
     /*
 	 * <RelationalExpr> ::=<AddExpr> | <AddExpr> <ComparisonOp> <AddExpr>
@@ -446,7 +472,6 @@ public class Parser
         return left;
     }
 
-
     /*
 	 * <AddExpr>::＝ <MultExpr> <MoreMultExpr>
      * <MoreMultExpr> ::= EMPTY | + <MultExpr> <MoreMultExpr> | - <MultExpr> <MoreMultExpr>
@@ -456,12 +481,12 @@ public class Parser
         Expr left = parseMultExpr();
         Expr right = null;
         while (this.currentToken.kind == PLUSMINUS) {
+            System.out.println("im a freak 3");
             this.currentToken = scanner.scan();
             right = parseAddExpr();
         }
         return new BinaryArithPlusExpr(this.currentToken.position, left, right);
     }
-
 
     /*
 	 * <MultiExpr> ::= <NewCastOrUnary> <MoreNCU>
@@ -474,6 +499,7 @@ public class Parser
 	    Expr left = parseNewCastOrUnary();
 	    this.currentToken = scanner.scan();
 	    while (this.currentToken.kind == MULDIV) {
+            System.out.println("im a freak 4");
 	        switch(this.currentToken.getSpelling()) {
                 case "*":
                     this.currentToken = scanner.scan();
@@ -581,6 +607,7 @@ public class Parser
                 || this.currentToken.kind == UNARYNOT || this.currentToken.spelling.equals("-");
 
 	    while(isUnaryPref){
+            System.out.println("im a freak 5");
             switch(currentToken.kind) {
                 case UNARYINCR:
                     this.currentToken = scanner.scan();
@@ -711,6 +738,7 @@ public class Parser
 	    eList.addElement(expr);
         this.currentToken = scanner.scan();
 	    while(this.currentToken.kind == COMMA){
+            System.out.println("im a freak 6");
 	        this.currentToken = scanner.scan();
 	        eList.addElement(parseExpression());
         }
@@ -730,6 +758,7 @@ public class Parser
 
         this.currentToken = scanner.scan();
 	    while (this.currentToken.kind == COMMA) {
+            System.out.println("im a freak 7");
             formalList.addElement(parseFormal());
             this.currentToken = scanner.scan();
         }
@@ -761,6 +790,10 @@ public class Parser
             if (this.currentToken.kind == RBRACKET) {
                 s = s.concat("[]");
                 return s;
+            }
+            else{
+                this.errorHandler.register(Error.Kind.PARSE_ERROR, "INVALID TYPE EXPRESSION");
+                return null;
             }
         }
         return s;

@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="jdk" jdkName="10" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar:///Library/Java/JavaVirtualMachines/jdk-10.0.2.jdk/Contents/Home/lib/richtextfx-fat-0.9.1.jar!/" />
@@ -20,6 +20,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../CS361proj5/include/richtextfx-fat-0.9.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../CS361/ZhouCode/out/production/ZhouCode/proj6LiLianKeithHardyZhou/richtextfx-fat-0.9.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
