@@ -86,10 +86,9 @@ public class Scanner
     public Token scan() {
         Character tempChar = currentChar;
 
-        if(currentChar.equals(SourceFile.eof)){
-//            System.out.println("fuck me right");
-            return new Token(Token.Kind.EOF, currentChar.toString(), this.sourceFile.getCurrentLineNumber());
-        }
+        if (currentChar.equals(SourceFile.eof)) return new Token(Token.Kind.EOF,
+                currentChar.toString(), this.sourceFile.getCurrentLineNumber());
+
         //gets rid of whitespace
         else {
             while(currentChar.equals('\t') || currentChar.equals('\r')

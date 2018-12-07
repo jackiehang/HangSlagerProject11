@@ -37,6 +37,8 @@ import javafx.stage.Window;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import proj10AhnDeGrawHangSlager.bantam.ast.Program;
+import proj10AhnDeGrawHangSlager.bantam.ast.ASTNode;
+import proj10AhnDeGrawHangSlager.bantam.ast.Program;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Scanner;
 import proj10AhnDeGrawHangSlager.bantam.lexer.Token;
 import proj10AhnDeGrawHangSlager.bantam.parser.Parser;
@@ -390,8 +392,10 @@ public class FileController {
 
             else{
                 Program root = this.parser.parse(filename);
-                Drawer d = new Drawer();
-                d.draw(filename, root);
+                Drawer drawer = new Drawer();
+//                System.out.println(filename.toString());
+                drawer.draw(filename, root);
+                return;
             }
 
         }
