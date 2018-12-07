@@ -1,0 +1,8 @@
+class A{
+	int s = 0; 
+	int t =1; 
+	void add(){
+		s += t;
+	}
+
+}
