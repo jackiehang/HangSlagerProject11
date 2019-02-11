@@ -565,4 +565,8 @@ public class Scanner
 
     }
 
+    public String getFilename(){
+        return sourceFile.getFilename();
+    }
+
 }

@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javafx.application.Platform;
-import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -39,7 +38,7 @@ import org.fxmisc.richtext.CodeArea;
 import proj11HangSlager.bantam.ast.Program;
 import proj11HangSlager.bantam.lexer.Scanner;
 import proj11HangSlager.bantam.lexer.Token;
-import proj11HangSlager.bantam.parser.Parser;
+import proj11HangSlager.bantam.parser.Parser1;
 import proj11HangSlager.bantam.treedrawer.Drawer;
 import proj11HangSlager.bantam.util.CompilationException;
 import proj11HangSlager.bantam.util.Error;
@@ -69,7 +68,7 @@ public class FileController {
 
 
     private Scanner scanner;
-    private Parser parser;
+    private Parser1 parser;
     private ErrorHandler errorHandler;
 
     /**
@@ -370,7 +369,7 @@ public class FileController {
                     this.scanner = new Scanner(filename, this.errorHandler);
                 }
                 else{
-                    this.parser = new Parser(this.errorHandler);
+                    this.parser = new Parser1(this.errorHandler);
                 }
 
             }
