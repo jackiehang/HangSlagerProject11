@@ -35,6 +35,7 @@ import javafx.stage.Window;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
+import proj11HangSlager.bantam.MainMainVisitor;
 import proj11HangSlager.bantam.ast.Program;
 import proj11HangSlager.bantam.lexer.Scanner;
 import proj11HangSlager.bantam.lexer.Token;
@@ -357,7 +358,7 @@ public class FileController {
      * @param event press of the Scan button triggering the handleScan and Parse method
      * @param scanOrParse string "SCAN_ONLY" or "SCAN_AND_PARSE"
      */
-    public void scanOrParseHelper(Event event, String scanOrParse ){
+    public Program scanOrParseHelper(Event event, String scanOrParse ){
         JavaTab curTab = (JavaTab)this.javaTabPane.getSelectionModel().getSelectedItem();
 
 
@@ -384,14 +385,14 @@ public class FileController {
                 while ( (nextToken = scanner.scan()).kind != Token.Kind.EOF) {
                     curTab.getCodeArea().appendText(nextToken.toString()+"\n");
                 }
-                return;
+                return null;
             }
 
             else{
                 Program root = this.parser.parse(filename);
                 Drawer drawer = new Drawer();
                 drawer.draw(filename, root);
-                return;
+                return root;
             }
 
         }
@@ -399,16 +400,29 @@ public class FileController {
         String saveStatus = this.askSaveAndScan(event);
         if (saveStatus == "cancel") {
             this.scanner = null;
-            return;
+            return null;
         }
         else if (saveStatus == "no") {
             if (tabFilepathMap.get(curTab) == null) {
-                return;
+                return null;
             }
         }
         else if (saveStatus == "yes"){
             scanOrParseHelper(event, scanOrParse);
         }
+        return null;
+    }
+
+    public Boolean handleMainCheck(Event event){
+        Program program;
+        try {
+            program = scanOrParseHelper(event, "SCAN_AND_PARSE");
+        }
+        catch(CompilationException e){
+            throw e;
+        }
+        MainMainVisitor mainVisitor = new MainMainVisitor();
+        return mainVisitor.hasMain(program);
 
     }
 

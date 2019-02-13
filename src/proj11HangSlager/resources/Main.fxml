@@ -99,9 +99,9 @@
     </ToolBar>
 
     <ToolBar>
-        <Button fx:id="checkMainBtn" onAction="#handleFindText" text="Check Main"/>
-        <Button fx:id="checkStringBtn" onAction="#handleHighlightPrevMatch" text="Check String Constants"/>
-        <Button fx:id="checkLocalVarBtn" onAction="#handleHighlightNextMatch" text="Check # Local Variables"/>
+        <Button fx:id="checkMainBtn" onAction="#handleMainCheck" text="Check Main"/>
+        <Button fx:id="checkStringBtn" onAction="#handleStrConstCheck" text="Check String Constants"/>
+        <Button fx:id="checkLocalVarBtn" onAction="#handleNumLocVarCheck" text="Check # Local Variables"/>
 
     </ToolBar>
 

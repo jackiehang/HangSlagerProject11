@@ -195,6 +195,98 @@ public class MasterController {
         }
     }
 
+    /**
+     * Scans and parses the file of the current tab
+     * @param event
+     * @throws InterruptedException
+     */
+
+    @FXML public void handleMainCheck(Event event) throws InterruptedException {
+        Boolean hasMain;
+        this.console.clear();
+        try {
+             hasMain = this.fileController.handleMainCheck(event);
+        } catch (CompilationException e) {
+            this.console.writeLine(e.toString() + "\n", "ERROR");
+            return;
+        }
+
+        List<Error> scanningAndParsingErrors = fileController.getErrors();
+
+        if (scanningAndParsingErrors != null) {
+
+            errorHelper(scanningAndParsingErrors);
+        }
+
+        if(hasMain){
+            this.console.writeLine("This file has a Main class and a main method.","CONS");
+        }
+        else{
+            this.console.writeLine("This file does not have a Main class or a main method.", "CONS");
+
+        }
+
+
+    }
+
+    /**
+     * Scans and parses the file of the current tab
+     * @param event
+     * @throws InterruptedException
+     */
+
+    @FXML public void handleStrConstCheck(Event event) throws InterruptedException {
+
+        this.console.clear();
+        try {
+            this.fileController.handleScanAndParse(event);
+        } catch (CompilationException e) {
+            this.console.writeLine(e.toString() + "\n", "ERROR");
+            return;
+        }
+
+        List<Error> scanningAndParsingErrors = fileController.getErrors();
+
+        if (scanningAndParsingErrors != null) {
+
+            errorHelper(scanningAndParsingErrors);
+        }
+        else{
+            this.console.writeLine("Scan and parse of file was successful.", "CONS");
+
+        }
+    }
+
+    /**
+     * Scans and parses the file of the current tab
+     * @param event
+     * @throws InterruptedException
+     */
+
+    @FXML public void handleNumLocVarCheck(Event event) throws InterruptedException {
+
+        this.console.clear();
+        try {
+            this.fileController.handleScanAndParse(event);
+        } catch (CompilationException e) {
+            this.console.writeLine(e.toString() + "\n", "ERROR");
+            return;
+        }
+
+        List<Error> scanningAndParsingErrors = fileController.getErrors();
+
+        if (scanningAndParsingErrors != null) {
+
+            errorHelper(scanningAndParsingErrors);
+        }
+        else{
+            this.console.writeLine("Scan and parse of file was successful.", "CONS");
+
+        }
+    }
+
+
+
 
 
     /**
