@@ -19,33 +19,30 @@ public class NumLocalVarsVisitor extends Visitor{
         Map<String,Integer> numVarsMap = new HashMap<String,Integer>();
         ast.accept(this);
         for(int i = 0; i < numVars.size(); i++){
-            numVarsMap.put(methodNames.get(i), numVars.get(i));
+            numVarsMap.put(methodNames.get(i).substring(4), numVars.get(i));
         }
         return numVarsMap;
     }
 
     public Object visit(Class_ node){
         super.visit(node);
-        System.out.println(methodNames.size());
         for(int i = 0; i < methodNames.size(); i++){
-            //methodNames.set(i, node.getName() + "." + methodNames.get(i));
+            if(!methodNames.get(i).contains("%%%%")) {
+                methodNames.set(i, "%%%%" + node.getName() + "." + methodNames.get(i));
+            }
         }
-        node.getMemberList().accept(this);
         return null;
     }
 
     public Object visit(Method node){
         super.visit(node);
-        System.out.println("hello i am here");
-        node.getStmtList().accept(this);
         methodNames.add(node.getName());
         numVars.add(numCurVars);
+        numCurVars = 0;
         return null;
     }
 
     public Object visit(DeclStmt node){
-        super.visit(node);
-        System.out.println("i am also here yaaa");
         numCurVars++;
         return null;
 

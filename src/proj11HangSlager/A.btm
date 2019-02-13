@@ -6,11 +6,21 @@ class Main{
 	String l = "hillo";
 	void add(){
 		var u = true;
-
+        var isij = false;
 	}
 	void main(){
 		var b = true;
 	}
-	
+}
 
+
+class Lucas{
+    void saveLives(){
+        var didHeSaveMyLife = true;
+    }
+
+    void destroyLives(){
+        var pleaseNo = false;
+        var yesYes = true;
+    }
 }
