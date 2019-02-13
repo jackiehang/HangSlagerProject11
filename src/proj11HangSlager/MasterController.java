@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import proj11HangSlager.bantam.util.CompilationException;
 import proj11HangSlager.bantam.util.Error;
@@ -63,6 +64,12 @@ public class MasterController {
     @FXML private Menu prefMenu;
     @FXML private Button scanButton;
     @FXML private Button scanAndParseButton;
+    @FXML private Button checkMainBtn;
+    @FXML private Button checkStringBtn;
+    @FXML private Button checkLocalVarBtn;
+
+
+
 
     private EditController editController;
     private FileController fileController;
@@ -84,14 +91,15 @@ public class MasterController {
         closeMenuItem.disableProperty().bind(listProperty.emptyProperty());
         scanButton.disableProperty().bind(listProperty.emptyProperty());
         scanAndParseButton.disableProperty().bind(listProperty.emptyProperty());
+        checkMainBtn.disableProperty().bind(listProperty.emptyProperty());
+        checkStringBtn.disableProperty().bind(listProperty.emptyProperty());
+        checkLocalVarBtn.disableProperty().bind(listProperty.emptyProperty());
 
 
         // this line from JianQuanMarcello project 6
         this.setupContextMenuController();
 
     }
-
-
 
 
     /**
@@ -196,7 +204,8 @@ public class MasterController {
     }
 
     /**
-     * Scans and parses the file of the current tab
+     * Scans and parses the file of the current tab and checks to see if there is a
+     * Main class and a main method
      * @param event
      * @throws InterruptedException
      */
@@ -211,13 +220,6 @@ public class MasterController {
             return;
         }
 
-        List<Error> scanningAndParsingErrors = fileController.getErrors();
-
-        if (scanningAndParsingErrors != null) {
-
-            errorHelper(scanningAndParsingErrors);
-        }
-
         if(hasMain){
             this.console.writeLine("This file has a Main class and a main method.","CONS");
         }
@@ -229,32 +231,25 @@ public class MasterController {
 
     }
 
+
     /**
      * Scans and parses the file of the current tab
+     * and prints out the string constants
      * @param event
      * @throws InterruptedException
      */
 
     @FXML public void handleStrConstCheck(Event event) throws InterruptedException {
-
+        Map<String,String> stringConstants;
         this.console.clear();
         try {
-            this.fileController.handleScanAndParse(event);
+            stringConstants = this.fileController.handleStrConstCheck(event);
         } catch (CompilationException e) {
             this.console.writeLine(e.toString() + "\n", "ERROR");
             return;
         }
 
-        List<Error> scanningAndParsingErrors = fileController.getErrors();
-
-        if (scanningAndParsingErrors != null) {
-
-            errorHelper(scanningAndParsingErrors);
-        }
-        else{
-            this.console.writeLine("Scan and parse of file was successful.", "CONS");
-
-        }
+        this.console.writeLine("These are the string constants: \n"+stringConstants.toString(), "CONS");
     }
 
     /**
@@ -264,27 +259,18 @@ public class MasterController {
      */
 
     @FXML public void handleNumLocVarCheck(Event event) throws InterruptedException {
-
+        Map<String,Integer> localVar;
         this.console.clear();
         try {
-            this.fileController.handleScanAndParse(event);
+              localVar =  this.fileController.handleNumLocVarCheck(event);
         } catch (CompilationException e) {
             this.console.writeLine(e.toString() + "\n", "ERROR");
             return;
         }
 
-        List<Error> scanningAndParsingErrors = fileController.getErrors();
-
-        if (scanningAndParsingErrors != null) {
-
-            errorHelper(scanningAndParsingErrors);
-        }
-        else{
-            this.console.writeLine("Scan and parse of file was successful.", "CONS");
-
-        }
+        this.console.writeLine("These are the number of variables in each method: \n", "CONS");
+        this.console.writeLine(localVar.toString(), "CONS");
     }
-
 
 
 

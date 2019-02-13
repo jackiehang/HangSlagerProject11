@@ -16,9 +16,7 @@ public class MainMainVisitor extends Visitor{
         if(node.getName().equals("Main")){
             node.getMemberList().accept(this);
         }
-        else {
-            hasBeenFound = false;
-        }
+
         return null;
     }
     public Object visit(Method node) {

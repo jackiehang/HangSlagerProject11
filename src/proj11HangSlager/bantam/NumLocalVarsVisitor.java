@@ -11,9 +11,9 @@ import proj11HangSlager.bantam.visitor.Visitor;
 
 public class NumLocalVarsVisitor extends Visitor{
 
-    ArrayList<Integer> numVars = new ArrayList<>();
-    ArrayList<String> methodNames = new ArrayList<>();
-    int numCurVars = 0;
+    private ArrayList<Integer> numVars = new ArrayList<>();
+    private ArrayList<String> methodNames = new ArrayList<>();
+    private int numCurVars = 0;
 
     public Map<String,Integer> getNumLocalVars(Program ast){
         Map<String,Integer> numVarsMap = new HashMap<String,Integer>();

@@ -16,6 +16,7 @@ package proj11HangSlager;
 import javafx.event.Event;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.io.File;
 import java.io.BufferedWriter;
@@ -36,6 +37,8 @@ import javafx.stage.Window;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import proj11HangSlager.bantam.MainMainVisitor;
+import proj11HangSlager.bantam.NumLocalVarsVisitor;
+import proj11HangSlager.bantam.StringConstantsVisitor;
 import proj11HangSlager.bantam.ast.Program;
 import proj11HangSlager.bantam.lexer.Scanner;
 import proj11HangSlager.bantam.lexer.Token;
@@ -425,6 +428,33 @@ public class FileController {
         return mainVisitor.hasMain(program);
 
     }
+
+    public Map<String, String> handleStrConstCheck(Event event){
+        Program program;
+        try {
+            program = scanOrParseHelper(event, "SCAN_AND_PARSE");
+        }
+        catch(CompilationException e){
+            throw e;
+        }
+
+        StringConstantsVisitor stringConstantsVisitor = new StringConstantsVisitor();
+        return stringConstantsVisitor.getStringConstants(program);
+    }
+
+    public Map<String,Integer> handleNumLocVarCheck(Event event){
+        Program program;
+        try {
+            program = scanOrParseHelper(event, "SCAN_AND_PARSE");
+        }
+        catch(CompilationException e){
+            throw e;
+        }
+
+        NumLocalVarsVisitor numLocalVarsVisitor = new NumLocalVarsVisitor();
+        return numLocalVarsVisitor.getNumLocalVars(program);
+    }
+
 
 
     /**
