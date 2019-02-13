@@ -4,8 +4,10 @@ class Main{
 	String x = "hi";
 	String b = "hip";
 	String l = "hillo";
+	boolean b = 3;
+	int[] arr = new int[3];
 	void add(){
-		var u = true;
+		boolean u = true;
         var isij = false;
 	}
 	void main(){

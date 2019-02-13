@@ -4,11 +4,12 @@
  * Class: CS 361
  * Project 7
  * Date: November 2, 2018
- * ---------------------------
- * Edited From: Zena Abulhab, Paige Hanssen, Kyle Slager, Kevin Zhou
- * Project 5
- * Date: October 12, 2018
  *
+ * --------------------------------------
+ *
+ * Modified by Jackie Hang, Kyle Slager
+ * Project 11
+ * Date: February 13, 2019
  */
 
 package proj11HangSlager;
@@ -36,9 +37,9 @@ import javafx.stage.Window;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
-import proj11HangSlager.bantam.MainMainVisitor;
-import proj11HangSlager.bantam.NumLocalVarsVisitor;
-import proj11HangSlager.bantam.StringConstantsVisitor;
+import proj11HangSlager.bantam.semant.MainMainVisitor;
+import proj11HangSlager.bantam.semant.NumLocalVarsVisitor;
+import proj11HangSlager.bantam.semant.StringConstantsVisitor;
 import proj11HangSlager.bantam.ast.Program;
 import proj11HangSlager.bantam.lexer.Scanner;
 import proj11HangSlager.bantam.lexer.Token;
@@ -359,7 +360,7 @@ public class FileController {
      * Assists with calling just scan or scanning and parsing the
      * file
      * @param event press of the Scan button triggering the handleScan and Parse method
-     * @param scanOrParse string "SCAN_ONLY" or "SCAN_AND_PARSE"
+     * @param scanOrParse string "SCAN_ONLY" or "SCAN_AND_PARSE" or "PARSE_NO_TREE_DRAWN"
      */
     public Program scanOrParseHelper(Event event, String scanOrParse ){
         JavaTab curTab = (JavaTab)this.javaTabPane.getSelectionModel().getSelectedItem();
@@ -393,8 +394,10 @@ public class FileController {
 
             else{
                 Program root = this.parser.parse(filename);
-                Drawer drawer = new Drawer();
-                drawer.draw(filename, root);
+                if(scanOrParse.equals("SCAN_AND_PARSE")) {
+                    Drawer drawer = new Drawer();
+                    drawer.draw(filename, root);
+                }
                 return root;
             }
 
@@ -416,23 +419,36 @@ public class FileController {
         return null;
     }
 
+    /**
+     * Parses the program and checks if there is a
+     * main method and a Main class
+     * @param event
+     * @return boolean of statement above
+     */
     public Boolean handleMainCheck(Event event){
         Program program;
         try {
-            program = scanOrParseHelper(event, "SCAN_AND_PARSE");
+            program = scanOrParseHelper(event, "PARSE_NO_TREE_DRAWN");
         }
         catch(CompilationException e){
             throw e;
+
         }
         MainMainVisitor mainVisitor = new MainMainVisitor();
         return mainVisitor.hasMain(program);
 
     }
 
+    /**
+     * Parses the program and returns a map
+     * of the String constants in the program
+     * @param event
+     * @return Map<String, String> where the key is STRING_CONST + NUMBER
+     */
     public Map<String, String> handleStrConstCheck(Event event){
         Program program;
         try {
-            program = scanOrParseHelper(event, "SCAN_AND_PARSE");
+            program = scanOrParseHelper(event, "PARSE_NO_TREE_DRAWN");
         }
         catch(CompilationException e){
             throw e;
@@ -442,10 +458,18 @@ public class FileController {
         return stringConstantsVisitor.getStringConstants(program);
     }
 
+    /**
+     *
+     * Parses the program and returns a map of the
+     * number of local variables in every method in the
+     * program
+     * @param event
+     * @return
+     */
     public Map<String,Integer> handleNumLocVarCheck(Event event){
         Program program;
         try {
-            program = scanOrParseHelper(event, "SCAN_AND_PARSE");
+            program = scanOrParseHelper(event, "PARSE_NO_TREE_DRAWN");
         }
         catch(CompilationException e){
             throw e;

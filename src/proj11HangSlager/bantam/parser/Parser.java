@@ -27,24 +27,27 @@
  * The special character "|" is used to separate the rules for each variable.
  * EMPTY indicates a rule with an empty right hand side.
  * All other symbols in the rules are terminals.
+ *
+ * --------------------------------------
+ *
+ * Modified by Jackie Hang, Kyle Slager
+ * Project 11
+ * Date: February 13, 2019
  */
+
 
 package proj11HangSlager.bantam.parser;
 
-import proj11HangSlager.bantam.MainMainVisitor;
-import proj11HangSlager.bantam.NumLocalVarsVisitor;
-import proj11HangSlager.bantam.StringConstantsVisitor;
+import proj11HangSlager.bantam.semant.MainMainVisitor;
+import proj11HangSlager.bantam.semant.NumLocalVarsVisitor;
+import proj11HangSlager.bantam.semant.StringConstantsVisitor;
 import proj11HangSlager.bantam.ast.*;
 import proj11HangSlager.bantam.lexer.Scanner;
 import proj11HangSlager.bantam.lexer.Token;
 import proj11HangSlager.bantam.util.CompilationException;
 import proj11HangSlager.bantam.util.Error;
 import proj11HangSlager.bantam.util.ErrorHandler;
-import proj11HangSlager.bantam.visitor.Visitor;
 
-import java.util.List;
-
-import static proj11HangSlager.bantam.lexer.Token.Kind;
 import static proj11HangSlager.bantam.lexer.Token.Kind.*;
 
 

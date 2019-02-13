@@ -254,6 +254,8 @@ public class MasterController {
 
     /**
      * Scans and parses the file of the current tab
+     * and writes to console number of local variables
+     * in every method
      * @param event
      * @throws InterruptedException
      */
@@ -271,7 +273,6 @@ public class MasterController {
         this.console.writeLine("These are the number of variables in each method: \n", "CONS");
         this.console.writeLine(localVar.toString(), "CONS");
     }
-
 
 
 
