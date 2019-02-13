@@ -270,8 +270,6 @@ public class MasterController {
      * Returns when the user cancels exiting any tab.
      */
     @FXML public void handleExit(Event event) {
-        System.out.println("FC: " + fileController);
-        System.out.println("THIS1: " + this);
         this.fileController.handleExit(event);
     }
 

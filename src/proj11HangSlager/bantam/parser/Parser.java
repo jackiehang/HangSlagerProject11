@@ -88,6 +88,8 @@ public class Parser {
                         " " + metToken + " instead.\n ";
         errorHandler.register(Error.Kind.PARSE_ERROR, scanner.getFilename(), position,
                 message);
+
+
         // exit immediately because the parser can't continue
         throw new CompilationException("Parser error found.");
     }
@@ -195,7 +197,6 @@ public class Parser {
                 advance();
                 init = parseExpression();
             }
-
             advanceIfMatches(SEMICOLON);
 
             return new Field(position, type, id, init);
@@ -218,6 +219,7 @@ public class Parser {
                 stmt = parseBlock();
                 break;
             case VAR:
+
                 stmt = parseDeclStmt();
                 break;
             case RETURN:
@@ -657,7 +659,6 @@ public class Parser {
 
         Expr unary;
         int position = currentToken.position;
-
         unary = parsePrimary();
         if (currentToken.kind == UNARYINCR) {
             unary = new UnaryIncrExpr(position, unary, true);
@@ -673,15 +674,84 @@ public class Parser {
 
 
     /*
-     * <Primary> ::= ( <Expression> ) <Suffix> | <IntegerConst> | <BooleanConst> |
-     *                               <StringConst> <Suffix> | <Identifier> <Suffix>
-     * <Suffix> ::=    . <Identifier> <Suffix>
-     *               | [ <Expression> ] <Suffix>
-     *               | ( <Arguments> ) <Suffix>
-     *               | EMPTY
+     * <Primary> ::= ( <Expression> ) <ExprSuffix> | <IntegerConst> | <BooleanConst> |
+     *                               <StringConst> <IdSuffix> | <Identifier> <Suffix>
+     * <IdSuffix>    ::=  . <Identifier> <Suffix> | EMPTY
+     * <IndexSuffix> ::=  [ <Expression> ] <IdSuffix> | EMPTY
+     * <DispSuffix>  ::=  ( <Arguments> ) <IdSuffix> | EMPTY
+     * <ExprSuffix>  ::=  <IdSuffix> | <IndexSuffix>
+     * <Suffix>      ::=  <IdSuffix> | <DispSuffix> | <IndexSuffix>
      */
+
     private Expr parsePrimary() {
-        return null; // replace this line
+        Expr tempPrimExpr=null;
+        String id;
+        int position = currentToken.position;
+
+        if(currentToken.kind.equals(INTCONST)){
+            return parseIntConst();
+        }
+
+        else if(currentToken.kind.equals(BOOLEAN)){
+            return parseBoolean();
+
+        }
+
+        else if(currentToken.kind.equals(STRCONST)){
+            tempPrimExpr = parseStringConst();
+        }
+
+        else if(currentToken.kind.equals(LPAREN)){
+            tempPrimExpr = parseExpression();
+            advanceIfMatches(RPAREN);
+        }
+
+        else if(currentToken.kind.equals(IDENTIFIER)){
+
+            id = parseIdentifier();
+
+            if(currentToken.kind.equals(LPAREN)){
+                ExprList args = parseArguments();
+                advanceIfMatches(RPAREN);
+                tempPrimExpr = new DispatchExpr(position,null,id, args );
+
+            }
+            else if(currentToken.kind.equals(LBRACKET)){
+                Expr expr = parseExpression();
+                advanceIfMatches(RBRACKET);
+                tempPrimExpr = new ArrayExpr(position,null,id, expr);
+            }
+            else{
+
+                tempPrimExpr = new VarExpr(position,null, id);
+            }
+
+        }
+
+        while(currentToken.kind.equals(DOT)){
+
+            advance();
+            id = parseIdentifier();
+
+            if(currentToken.kind.equals(LPAREN)){
+                ExprList args = parseArguments();
+                advanceIfMatches(RPAREN);
+                tempPrimExpr = new DispatchExpr(position,tempPrimExpr,id, args );
+
+            }
+            else if(currentToken.kind.equals(LBRACKET)){
+                Expr expr = parseExpression();
+                advanceIfMatches(RBRACKET);
+                tempPrimExpr = new ArrayExpr(position,tempPrimExpr,id, expr);
+            }
+            else{
+                tempPrimExpr = new VarExpr(position,tempPrimExpr, id);
+            }
+
+
+        }
+
+        return tempPrimExpr;
     }
 
 
@@ -705,6 +775,7 @@ public class Parser {
 
         return ar;
     }
+
 
 
     //<Parameters> ::=  EMPTY | <Formal> <MoreFormals>
@@ -780,6 +851,7 @@ public class Parser {
         int position = currentToken.position;
         String spelling = currentToken.spelling;
         advanceIfMatches(INTCONST);
+
         return new ConstIntExpr(position, spelling);
     }
 

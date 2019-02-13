@@ -358,12 +358,10 @@ public class LayoutVisitor extends Visitor
         DrawingTree dt = layoutCaption(name);
         DrawingTree[] childTrees = new DrawingTree[childNodes.getSize()];
         int i = 0;
-        System.out.println(("NUM CHILD NODES: " + childNodes.getSize()));
-//        System.out.println("NODES: " + childNodes.get(0));
+
         for(ASTNode childNode : childNodes) {
-            System.out.println("node: " + childNode);
-//            childTrees[i] = (DrawingTree) childNode.accept(this);
-//            i++;
+            childTrees[i] = (DrawingTree) childNode.accept(this);
+            i++;
         }
         dt.setChildren(childTrees);
         attachParent(dt, join(dt));

@@ -98,12 +98,19 @@
         <Button fx:id="replaceBtn" onAction="#handleReplaceText" text="Replace"/>
     </ToolBar>
 
+    <ToolBar>
+        <Button fx:id="checkMainBtn" onAction="#handleFindText" text="Check Main"/>
+        <Button fx:id="checkStringBtn" onAction="#handleHighlightPrevMatch" text="Check String Constants"/>
+        <Button fx:id="checkLocalVarBtn" onAction="#handleHighlightNextMatch" text="Check # Local Variables"/>
+
+    </ToolBar>
+
         <SplitPane orientation="VERTICAL" focusTraversable="true" VBox.vgrow="ALWAYS">
             <items>
                 <JavaTabPane fx:id="javaTabPane" prefHeight="392.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
                 </JavaTabPane>
 
-                <Console fx:id="console" prefHeight="228.0" prefWidth="1200.0" VBox.vgrow="ALWAYS">
+                <Console fx:id="console" prefHeight="100.0" prefWidth="1200.0" VBox.vgrow="ALWAYS">
                 </Console>
             </items>
         </SplitPane>
