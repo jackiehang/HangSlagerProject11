@@ -15,7 +15,6 @@ package proj11HangSlager;
 
 import javafx.event.Event;
 
-import java.awt.desktop.SystemEventListener;
 import java.util.List;
 import java.util.Optional;
 import java.io.File;
@@ -40,7 +39,6 @@ import proj11HangSlager.bantam.ast.Program;
 import proj11HangSlager.bantam.lexer.Scanner;
 import proj11HangSlager.bantam.lexer.Token;
 import proj11HangSlager.bantam.parser.Parser;
-import proj11HangSlager.bantam.parser.Parser1;
 import proj11HangSlager.bantam.treedrawer.Drawer;
 import proj11HangSlager.bantam.util.CompilationException;
 import proj11HangSlager.bantam.util.Error;
@@ -391,7 +389,6 @@ public class FileController {
 
             else{
                 Program root = this.parser.parse(filename);
-                System.out.println(root);
                 Drawer drawer = new Drawer();
                 drawer.draw(filename, root);
                 return;

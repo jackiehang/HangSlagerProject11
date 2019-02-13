@@ -1,8 +1,16 @@
-class A{
+class Main{
 	int s = 0; 
 	int t = 1; 
+	String x = "hi";
+	String b = "hip";
+	String l = "hillo";
 	void add(){
-		boolean u = true;
+		var u = true;
+
 	}
+	void main(){
+		var b = true;
+	}
+	
 
 }

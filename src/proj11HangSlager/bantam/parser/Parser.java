@@ -31,12 +31,16 @@
 
 package proj11HangSlager.bantam.parser;
 
+import proj11HangSlager.bantam.MainMainVisitor;
+import proj11HangSlager.bantam.NumLocalVarsVisitor;
+import proj11HangSlager.bantam.StringConstantsVisitor;
 import proj11HangSlager.bantam.ast.*;
 import proj11HangSlager.bantam.lexer.Scanner;
 import proj11HangSlager.bantam.lexer.Token;
 import proj11HangSlager.bantam.util.CompilationException;
 import proj11HangSlager.bantam.util.Error;
 import proj11HangSlager.bantam.util.ErrorHandler;
+import proj11HangSlager.bantam.visitor.Visitor;
 
 import java.util.List;
 
@@ -88,7 +92,6 @@ public class Parser {
                         " " + metToken + " instead.\n ";
         errorHandler.register(Error.Kind.PARSE_ERROR, scanner.getFilename(), position,
                 message);
-
 
         // exit immediately because the parser can't continue
         throw new CompilationException("Parser error found.");
@@ -868,23 +871,18 @@ public class Parser {
         ErrorHandler errorHandler = new ErrorHandler();
         Parser parser = new Parser(errorHandler);
 
-        if( args.length == 0)
-            args = new String[]{"testProgram.btm"};
+        Program program = parser.parse("A.btm");
+        MainMainVisitor mainVisitor = new MainMainVisitor();
 
-        for (String inFile : args) {
-            System.out.println("\n========== Results for " + inFile + " =============");
-            try {
-                errorHandler.clear();
-                Program program = parser.parse(inFile);
-                System.out.println("  Parsing was successful.");
-            } catch (CompilationException ex) {
-                System.out.println("  There were errors:");
-                List<Error> errors = errorHandler.getErrorList();
-                for (Error error : errors) {
-                    System.out.println("\t" + error.toString());
-                }
-            }
-        }
+        System.out.println(mainVisitor.hasMain(program));
+
+
+        StringConstantsVisitor strVisitor = new StringConstantsVisitor();
+        System.out.println(strVisitor.getStringConstants(program));
+
+
+        NumLocalVarsVisitor numLocalVarsVisitor = new NumLocalVarsVisitor();
+        System.out.println(numLocalVarsVisitor.getNumLocalVars(program));
 
     }
 

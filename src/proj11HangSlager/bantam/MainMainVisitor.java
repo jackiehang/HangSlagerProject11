@@ -13,7 +13,7 @@ public class MainMainVisitor extends Visitor{
     }
     public Object visit(Class_ node){
         super.visit(node);
-        if(node.getName() == "Main"){
+        if(node.getName().equals("Main")){
             node.getMemberList().accept(this);
         }
         else {
@@ -23,7 +23,7 @@ public class MainMainVisitor extends Visitor{
     }
     public Object visit(Method node) {
         super.visit(node);
-        if((node.getName() == "main") && (node.getFormalList() == null) && (node.getReturnType() == "void")) {
+        if((node.getName().equals("main")) && (node.getFormalList().getSize() == 0) && (node.getReturnType().equals("void"))) {
             hasBeenFound = true;
         }
         return null;

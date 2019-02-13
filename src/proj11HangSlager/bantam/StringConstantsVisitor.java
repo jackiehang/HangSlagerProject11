@@ -10,7 +10,7 @@ public class StringConstantsVisitor extends Visitor {
 
     ArrayList<String> stringList = new ArrayList<>();
 
-    public Map<String, String> visit(Program ast) {
+    public Map<String, String> getStringConstants(Program ast) {
         Map<String,String> stringMap = new HashMap<String,String>();
         ast.accept(this);
         int stringNum = stringList.size();
